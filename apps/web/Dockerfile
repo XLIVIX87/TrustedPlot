@@ -10,6 +10,7 @@ RUN npm install
 
 # Build the app
 FROM base AS builder
+RUN apk add --no-cache openssl libc6-compat
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
@@ -28,6 +29,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
+RUN apk add --no-cache openssl libc6-compat
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
