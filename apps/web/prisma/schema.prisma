@@ -1,0 +1,518 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum UserRole {
+  BUYER
+  SELLER
+  MANDATE
+  LEGAL_OPS
+  INSPECTOR
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
+enum SellerType {
+  INDIVIDUAL
+  DEVELOPER
+  LANDLORD
+  MANDATE
+}
+
+enum KycStatus {
+  NOT_STARTED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum PropertyType {
+  APARTMENT
+  HOUSE
+  LAND
+  COMMERCIAL
+  OTHER
+}
+
+enum ListingType {
+  SALE
+  RENT
+  JV
+}
+
+enum ListingStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_VERIFICATION
+  VERIFIED
+  CONDITIONAL
+  REJECTED
+  SUSPENDED
+  ARCHIVED
+}
+
+enum ListingVisibility {
+  PUBLIC
+  PRIVATE
+  UNLISTED
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  FLOOR_PLAN
+  VIRTUAL_TOUR
+}
+
+enum DocumentType {
+  CERTIFICATE_OF_OCCUPANCY
+  RIGHT_OF_OCCUPANCY
+  GOVERNORS_CONSENT
+  DEED_OF_ASSIGNMENT
+  SURVEY_PLAN
+  OWNER_CONSENT
+  POWER_OF_ATTORNEY
+  LAND_RECEIPT
+  OTHER
+}
+
+enum DocumentStatus {
+  UPLOADED
+  PROCESSING
+  AVAILABLE
+  INVALID
+  REPLACED
+}
+
+enum VerificationStatus {
+  PENDING
+  IN_REVIEW
+  CONDITIONAL
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum VerificationDecisionType {
+  APPROVED
+  CONDITIONAL
+  REJECTED
+}
+
+enum BadgeType {
+  VERIFIED_GOLD
+  VERIFIED_GREEN
+  CONDITIONAL
+  NONE
+}
+
+enum InspectionStatus {
+  REQUESTED
+  CONFIRMED
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  OVERDUE
+}
+
+enum EscrowStatus {
+  CREATED
+  FUNDING_PENDING
+  FUNDED
+  PENDING_RESOLUTION
+  RELEASED
+  REFUNDED
+  DISPUTED
+  CANCELLED
+}
+
+enum EscrowEventType {
+  CREATED
+  FUND_ATTEMPTED
+  FUNDED
+  RELEASE_REQUESTED
+  RELEASED
+  DISPUTE_OPENED
+  REFUND_REQUESTED
+  REFUNDED
+  ERROR
+}
+
+enum DisputeStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  REJECTED
+  CANCELLED
+}
+
+enum AIFeatureType {
+  DOCUMENT_SUMMARY
+  OCR_ASSIST
+  INTERNAL_VERIFICATION_SUMMARY
+}
+
+enum AIUsageStatus {
+  SUCCESS
+  TIMEOUT
+  ERROR
+  RATE_LIMITED
+}
+
+// ============================================================
+// MODELS
+// ============================================================
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  name          String?
+  passwordHash  String?
+  emailVerified DateTime?
+  image         String?
+  role          UserRole   @default(BUYER)
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  // Relations
+  sellerProfile       SellerProfile?
+  accounts            Account[]
+  sessions            Session[]
+  auditLogs           AuditLog[]
+  aiUsageLogs         AIUsageLog[]
+  inspectionBookings  InspectionBooking[]   @relation("BuyerBookings")
+  inspectorBookings   InspectionBooking[]   @relation("InspectorBookings")
+  inspectionReports   InspectionReport[]
+  escrowsAsBuyer      EscrowCase[]          @relation("BuyerEscrows")
+  escrowsAsSeller     EscrowCase[]          @relation("SellerEscrows")
+  disputes            Dispute[]
+  verificationCasesSubmitted  VerificationCase[]  @relation("SubmittedVerifications")
+  verificationCasesAssigned   VerificationCase[]  @relation("AssignedVerifications")
+  verificationDecisions       VerificationDecision[]
+  uploadedDocuments   ListingDocument[]
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
+}
+
+// Auth.js models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model SellerProfile {
+  id          String     @id @default(cuid())
+  userId      String     @unique
+  sellerType  SellerType
+  displayName String
+  companyName String?
+  kycStatus   KycStatus  @default(NOT_STARTED)
+  isMandate   Boolean    @default(false)
+  bio         String?
+  phone       String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listings Listing[]
+
+  @@index([userId])
+  @@index([kycStatus])
+}
+
+model Listing {
+  id              String            @id @default(cuid())
+  sellerProfileId String
+  title           String
+  description     String            @db.Text
+  propertyType    PropertyType
+  listingType     ListingType
+  city            String
+  district        String
+  addressSummary  String?
+  price           BigInt
+  bedrooms        Int?
+  bathrooms       Int?
+  squareMeters    Float?
+  status          ListingStatus     @default(DRAFT)
+  visibility      ListingVisibility @default(PRIVATE)
+  badge           BadgeType         @default(NONE)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // Relations
+  sellerProfile     SellerProfile       @relation(fields: [sellerProfileId], references: [id])
+  media             ListingMedia[]
+  documents         ListingDocument[]
+  verificationCases VerificationCase[]
+  inspections       InspectionBooking[]
+  escrowCases       EscrowCase[]
+
+  @@index([city, district, propertyType, status])
+  @@index([sellerProfileId])
+  @@index([status])
+  @@index([badge])
+  @@index([price])
+}
+
+model ListingMedia {
+  id        String    @id @default(cuid())
+  listingId String
+  mediaType MediaType
+  url       String
+  altText   String?
+  position  Int       @default(0)
+  createdAt DateTime  @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+}
+
+model ListingDocument {
+  id               String         @id @default(cuid())
+  listingId        String
+  documentType     DocumentType
+  storageKey       String
+  originalFilename String
+  mimeType         String
+  fileSize         Int
+  checksum         String?
+  uploadedByUserId String
+  status           DocumentStatus @default(UPLOADED)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  listing    Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  uploadedBy User    @relation(fields: [uploadedByUserId], references: [id])
+
+  @@index([listingId])
+  @@index([documentType])
+  @@index([uploadedByUserId])
+  @@index([status])
+}
+
+model VerificationCase {
+  id                String             @id @default(cuid())
+  listingId         String
+  submittedByUserId String
+  assignedToUserId  String?
+  status            VerificationStatus @default(PENDING)
+  slaStartedAt     DateTime           @default(now())
+  slaDueAt          DateTime
+  notes             String?            @db.Text
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  // Relations
+  listing     Listing                @relation(fields: [listingId], references: [id])
+  submittedBy User                   @relation("SubmittedVerifications", fields: [submittedByUserId], references: [id])
+  assignedTo  User?                  @relation("AssignedVerifications", fields: [assignedToUserId], references: [id])
+  decisions   VerificationDecision[]
+
+  @@index([listingId])
+  @@index([status])
+  @@index([assignedToUserId])
+  @@index([slaDueAt])
+}
+
+model VerificationDecision {
+  id                   String                   @id @default(cuid())
+  verificationCaseId   String
+  reviewerUserId       String
+  decision             VerificationDecisionType
+  badgeType            BadgeType?
+  reason               String                   @db.Text
+  createdAt            DateTime                 @default(now())
+
+  verificationCase VerificationCase @relation(fields: [verificationCaseId], references: [id])
+  reviewer         User             @relation(fields: [reviewerUserId], references: [id])
+
+  @@index([verificationCaseId])
+  @@index([reviewerUserId])
+}
+
+model InspectionBooking {
+  id              String           @id @default(cuid())
+  listingId       String
+  buyerUserId     String
+  inspectorUserId String?
+  slotAt          DateTime
+  status          InspectionStatus @default(REQUESTED)
+  notes           String?          @db.Text
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  // Relations
+  listing   Listing           @relation(fields: [listingId], references: [id])
+  buyer     User              @relation("BuyerBookings", fields: [buyerUserId], references: [id])
+  inspector User?             @relation("InspectorBookings", fields: [inspectorUserId], references: [id])
+  report    InspectionReport?
+
+  @@index([listingId])
+  @@index([buyerUserId])
+  @@index([inspectorUserId])
+  @@index([slotAt])
+  @@index([status])
+}
+
+model InspectionReport {
+  id                        String   @id @default(cuid())
+  inspectionBookingId       String   @unique
+  submittedByInspectorUserId String
+  summary                   String   @db.Text
+  notes                     String?  @db.Text
+  reportData                Json?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  inspectionBooking InspectionBooking @relation(fields: [inspectionBookingId], references: [id])
+  inspector         User              @relation(fields: [submittedByInspectorUserId], references: [id])
+
+  @@index([inspectionBookingId])
+}
+
+model EscrowCase {
+  id                String       @id @default(cuid())
+  listingId         String
+  buyerUserId       String
+  sellerUserId      String
+  amount            BigInt
+  currency          String       @default("NGN")
+  status            EscrowStatus @default(CREATED)
+  providerReference String?
+  idempotencyKey    String?      @unique
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  // Relations
+  listing  Listing       @relation(fields: [listingId], references: [id])
+  buyer    User          @relation("BuyerEscrows", fields: [buyerUserId], references: [id])
+  seller   User          @relation("SellerEscrows", fields: [sellerUserId], references: [id])
+  events   EscrowEvent[]
+  disputes Dispute[]
+
+  @@index([listingId])
+  @@index([buyerUserId])
+  @@index([status])
+  @@index([providerReference])
+}
+
+model EscrowEvent {
+  id             String          @id @default(cuid())
+  escrowCaseId   String
+  eventType      EscrowEventType
+  payload        Json?
+  createdByUserId String?
+  createdAt      DateTime        @default(now())
+
+  escrowCase EscrowCase @relation(fields: [escrowCaseId], references: [id])
+
+  @@index([escrowCaseId])
+  @@index([eventType])
+}
+
+model Dispute {
+  id                String        @id @default(cuid())
+  escrowCaseId      String
+  openedByUserId    String
+  reason            String        @db.Text
+  status            DisputeStatus @default(OPEN)
+  resolutionSummary String?       @db.Text
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  escrowCase EscrowCase @relation(fields: [escrowCaseId], references: [id])
+  openedBy   User       @relation(fields: [openedByUserId], references: [id])
+
+  @@index([escrowCaseId])
+  @@index([openedByUserId])
+  @@index([status])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String
+  actionType  String
+  entityType  String
+  entityId    String
+  metadata    Json?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  actor User @relation(fields: [actorUserId], references: [id])
+
+  @@index([actorUserId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@index([actionType])
+}
+
+model AIUsageLog {
+  id            String        @id @default(cuid())
+  userId        String
+  featureType   AIFeatureType
+  documentId    String?
+  status        AIUsageStatus
+  latencyMs     Int?
+  tokenUsage    Int?
+  estimatedCost Float?
+  errorMessage  String?
+  createdAt     DateTime      @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([featureType])
+  @@index([createdAt])
+  @@index([status])
+}

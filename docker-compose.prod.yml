@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-trustedplot}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-trustedplot}
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - trustedplot_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-trustedplot}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3001:3000"
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-trustedplot}:${DB_PASSWORD}@db:5432/${DB_NAME:-trustedplot}?schema=public
+      AUTH_SECRET: ${AUTH_SECRET}
+      AUTH_URL: ${AUTH_URL:-https://trustedplot.srv1528810.hstgr.cloud}
+      NEXTAUTH_URL: ${AUTH_URL:-https://trustedplot.srv1528810.hstgr.cloud}
+      NODE_ENV: production
+      AI_PROVIDER: ${AI_PROVIDER:-}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_MODEL_SUMMARY: ${AI_MODEL_SUMMARY:-}
+      AI_REQUEST_TIMEOUT_MS: ${AI_REQUEST_TIMEOUT_MS:-10000}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  trustedplot_pgdata:
