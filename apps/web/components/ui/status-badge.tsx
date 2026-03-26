@@ -1,11 +1,11 @@
 type StatusVariant = 'success' | 'warning' | 'error' | 'info' | 'neutral';
 
 const variants: Record<StatusVariant, string> = {
-  success: 'bg-green-50 text-status-success border-green-200',
-  warning: 'bg-yellow-50 text-status-warning border-yellow-200',
-  error: 'bg-red-50 text-status-error border-red-200',
-  info: 'bg-blue-50 text-brand-primary border-blue-200',
-  neutral: 'bg-gray-50 text-gray-600 border-gray-200',
+  success: 'bg-tertiary-fixed text-on-tertiary-fixed',
+  warning: 'bg-secondary-fixed text-on-secondary-fixed',
+  error: 'bg-error-container text-on-error-container',
+  info: 'bg-primary-fixed text-on-primary-fixed',
+  neutral: 'bg-surface-container-high text-on-surface-variant',
 };
 
 const statusMap: Record<string, StatusVariant> = {
@@ -40,7 +40,7 @@ export function StatusBadge({ status }: { status: string }) {
   const style = variants[variant];
 
   return (
-    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${style}`}>
+    <span className={`inline-flex items-center rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${style}`}>
       {status.replace(/_/g, ' ')}
     </span>
   );

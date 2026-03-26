@@ -11,69 +11,73 @@ export function Navbar() {
   const role = user?.role;
 
   const isActive = (path: string) =>
-    pathname === path ? 'text-brand-primary font-medium' : 'text-gray-600 hover:text-brand-primary';
+    pathname === path
+      ? 'text-slate-900 font-bold border-b-2 border-slate-900 pb-1'
+      : 'text-slate-500 hover:text-slate-900 transition-colors';
 
   return (
-    <header className="border-b border-border bg-white sticky top-0 z-50">
-      <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
+    <header className="fixed top-0 w-full z-50 glass-header border-b border-slate-200/20 shadow-sm">
+      <div className="flex justify-between items-center px-8 h-20 max-w-full">
         <div className="flex items-center gap-8">
-          <Link href="/" className="text-xl font-semibold text-brand-dark">
+          <Link href="/" className="text-2xl font-black text-slate-900 tracking-tighter font-headline">
             TrustedPlot
           </Link>
-          <nav className="hidden md:flex items-center gap-5">
-            <Link href="/listings" className={`text-sm ${isActive('/listings')}`}>
-              Browse
+          <nav className="hidden md:flex gap-8 items-center">
+            <Link href="/listings" className={`font-headline tracking-tight font-bold ${isActive('/listings')}`}>
+              Listings
             </Link>
             {(role === 'SELLER' || role === 'MANDATE') && (
-              <Link href="/dashboard" className={`text-sm ${isActive('/dashboard')}`}>
+              <Link href="/dashboard" className={`font-headline tracking-tight font-bold ${isActive('/dashboard')}`}>
                 Dashboard
               </Link>
             )}
             {role === 'BUYER' && (
-              <Link href="/inspections" className={`text-sm ${isActive('/inspections')}`}>
+              <Link href="/inspections" className={`font-headline tracking-tight font-bold ${isActive('/inspections')}`}>
                 Inspections
               </Link>
             )}
             {(role === 'LEGAL_OPS' || role === 'ADMIN') && (
-              <Link href="/verification" className={`text-sm ${isActive('/verification')}`}>
+              <Link href="/verification" className={`font-headline tracking-tight font-bold ${isActive('/verification')}`}>
                 Verification
               </Link>
             )}
             {role === 'ADMIN' && (
-              <Link href="/admin" className={`text-sm ${isActive('/admin')}`}>
+              <Link href="/admin" className={`font-headline tracking-tight font-bold ${isActive('/admin')}`}>
                 Admin
+              </Link>
+            )}
+            {status === 'authenticated' && !['SELLER', 'MANDATE', 'LEGAL_OPS', 'ADMIN'].includes(role) && (
+              <Link href="/dashboard" className={`font-headline tracking-tight font-bold ${isActive('/dashboard')}`}>
+                Dashboard
               </Link>
             )}
           </nav>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {status === 'authenticated' ? (
             <>
-              <span className="text-sm text-gray-500 hidden md:inline">
-                {user?.name}
-                <span className="ml-1.5 inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-gray-600">
+              <span className="hidden lg:flex items-center gap-2 text-sm">
+                <span className="text-on-surface-variant font-headline font-bold">{user?.name}</span>
+                <span className="bg-secondary-fixed text-on-secondary-fixed px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
                   {role}
                 </span>
               </span>
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
-                className="rounded-md border border-border px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50"
+                className="text-slate-500 hover:text-slate-900 font-headline text-sm font-bold transition-colors"
               >
                 Sign Out
               </button>
             </>
           ) : (
             <>
-              <Link
-                href="/auth/signin"
-                className="text-sm text-gray-600 hover:text-brand-primary"
-              >
+              <Link href="/auth/signin" className="text-slate-500 hover:text-slate-900 font-headline text-sm font-bold transition-colors hidden sm:inline">
                 Sign In
               </Link>
               <Link
                 href="/auth/signup"
-                className="rounded-md bg-brand-primary px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+                className="machined-gradient text-white px-6 py-2.5 rounded-lg text-sm font-bold uppercase tracking-widest hover:scale-95 transition-all duration-150"
               >
                 Get Started
               </Link>

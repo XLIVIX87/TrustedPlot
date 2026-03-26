@@ -1,70 +1,145 @@
-import Link from 'next/link';
 import { Navbar } from '@/components/ui/navbar';
+import { Footer } from '@/components/ui/footer';
+import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-surface font-body text-on-surface">
       <Navbar />
 
-      {/* Hero */}
-      <section className="mx-auto max-w-7xl px-4 py-16">
-        <div className="max-w-2xl">
-          <h1 className="text-4xl font-bold tracking-tight text-brand-dark">
-            Trust-first real estate in Nigeria
+      <div className="pt-32 pb-20 px-8 max-w-[1440px] mx-auto">
+        {/* Discovery Header */}
+        <section className="mb-12">
+          <h1 className="text-5xl md:text-6xl font-headline font-extrabold tracking-tight text-primary mb-4">
+            Verified Land <br />
+            <span className="text-on-surface-variant">Architecture.</span>
           </h1>
-          <p className="mt-4 text-lg text-gray-600">
-            Verified listings, structured inspections, and secure transactions.
-            Every property is checked before you commit.
+          <p className="text-on-surface-variant max-w-2xl text-lg leading-relaxed">
+            The institutional ledger for high-value real estate. Browse land plots with verified legal chains of custody and digital architectural blueprints.
           </p>
-          <div className="mt-8 flex gap-4">
+        </section>
+
+        {/* Search & Filter Bar */}
+        <section className="mb-16">
+          <div className="bg-surface-container-lowest p-2 rounded-xl shadow-sm flex flex-col md:flex-row items-center gap-2">
+            <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-outline-variant/20">
+              <div className="px-6 py-3 flex flex-col">
+                <span className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1">Location</span>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-secondary">location_on</span>
+                  <select className="border-0 p-0 focus:ring-0 text-on-surface font-semibold bg-transparent w-full font-headline">
+                    <option value="">All Nigeria</option>
+                    <option value="Lagos">Lagos</option>
+                    <option value="Abuja">Abuja</option>
+                  </select>
+                </div>
+              </div>
+              <div className="px-6 py-3 flex flex-col">
+                <span className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1">Asset Type</span>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary">landscape</span>
+                  <select className="border-0 p-0 focus:ring-0 text-on-surface font-semibold bg-transparent w-full font-headline">
+                    <option value="">All Types</option>
+                    <option value="APARTMENT">Residential</option>
+                    <option value="HOUSE">House</option>
+                    <option value="LAND">Land Plot</option>
+                    <option value="COMMERCIAL">Commercial</option>
+                  </select>
+                </div>
+              </div>
+              <div className="px-6 py-3 flex flex-col">
+                <span className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1">Status</span>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-tertiary-container">verified_user</span>
+                  <select className="border-0 p-0 focus:ring-0 text-on-surface font-semibold bg-transparent w-full font-headline">
+                    <option value="">All Status</option>
+                    <option value="VERIFIED_GOLD">C of O Verified</option>
+                    <option value="VERIFIED_GREEN">R of O Verified</option>
+                    <option value="">Escrow Ready</option>
+                  </select>
+                </div>
+              </div>
+            </div>
             <Link
               href="/listings"
-              className="rounded-md bg-brand-primary px-6 py-3 text-sm font-medium text-white hover:bg-blue-700"
+              className="machined-gradient text-white w-full md:w-auto px-10 py-5 rounded-lg font-bold flex items-center justify-center gap-2"
             >
-              Browse Verified Properties
-            </Link>
-            <Link
-              href="/auth/signup"
-              className="rounded-md border border-border px-6 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              List Your Property
+              <span className="material-symbols-outlined">tune</span>
+              Discovery
             </Link>
           </div>
-        </div>
-      </section>
 
-      {/* Trust signals */}
-      <section className="mx-auto max-w-7xl px-4 pb-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="rounded-lg border border-border bg-white p-6">
-            <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center mb-4">
-              <svg className="w-5 h-5 text-status-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="font-semibold text-brand-dark">Verified Listings</h3>
-            <p className="text-sm text-gray-500 mt-2">Every property goes through document verification and badge assignment before buyers see it.</p>
+          {/* Filter Chips */}
+          <div className="mt-8 flex flex-wrap gap-3">
+            <button className="bg-primary text-white px-5 py-2 rounded-full text-xs font-bold tracking-wide flex items-center gap-2">
+              <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+              Highly Verified
+            </button>
+            <button className="bg-surface-container-high text-on-surface px-5 py-2 rounded-full text-xs font-bold tracking-wide hover:bg-surface-variant transition-colors">
+              Escrow Ready
+            </button>
+            <button className="bg-surface-container-high text-on-surface px-5 py-2 rounded-full text-xs font-bold tracking-wide hover:bg-surface-variant transition-colors">
+              Immediate Allocation
+            </button>
+            <button className="bg-surface-container-high text-on-surface px-5 py-2 rounded-full text-xs font-bold tracking-wide hover:bg-surface-variant transition-colors">
+              Architectural Plans Included
+            </button>
           </div>
-          <div className="rounded-lg border border-border bg-white p-6">
-            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mb-4">
-              <svg className="w-5 h-5 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <h3 className="font-semibold text-brand-dark">Structured Inspections</h3>
-            <p className="text-sm text-gray-500 mt-2">Book inspections with qualified inspectors. Receive standardized reports you can trust.</p>
+        </section>
+
+        {/* Placeholder Listings */}
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-32">
+          {/* These will be populated dynamically on /listings page */}
+          <div className="col-span-full text-center py-16">
+            <span className="material-symbols-outlined text-5xl text-outline-variant mb-4 block">search</span>
+            <p className="font-headline font-bold text-lg text-on-surface">Discover Verified Properties</p>
+            <p className="text-on-surface-variant text-sm mt-2">Use the search bar above or browse all listings.</p>
+            <Link
+              href="/listings"
+              className="inline-block mt-6 machined-gradient text-white px-8 py-3 rounded-lg font-bold text-sm tracking-widest uppercase"
+            >
+              Browse All Listings
+            </Link>
           </div>
-          <div className="rounded-lg border border-border bg-white p-6">
-            <div className="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center mb-4">
-              <svg className="w-5 h-5 text-status-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
+        </section>
+
+        {/* CTA Section (Asymmetric Bento) */}
+        <section className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+          <div className="md:col-span-7 bg-primary-container p-12 rounded-2xl flex flex-col justify-center">
+            <h2 className="text-4xl font-headline font-black text-white mb-6 leading-tight">
+              Secure Your Legacy with The Digital Ledger.
+            </h2>
+            <p className="text-slate-400 text-lg mb-8 max-w-lg">
+              Every plot on TrustedPlot undergoes a 4-step verification process, ensuring zero risk of litigation or land disputes.
+            </p>
+            <div className="flex gap-4">
+              <Link
+                href="/auth/signup"
+                className="bg-white text-primary px-8 py-3 rounded-lg font-bold text-sm tracking-widest uppercase hover:bg-slate-100 transition-all"
+              >
+                Start Acquisition
+              </Link>
+              <Link
+                href="/listings"
+                className="border border-white/20 text-white px-8 py-3 rounded-lg font-bold text-sm tracking-widest uppercase hover:bg-white/5 transition-all"
+              >
+                Learn About Escrow
+              </Link>
             </div>
-            <h3 className="font-semibold text-brand-dark">Secure Escrow</h3>
-            <p className="text-sm text-gray-500 mt-2">Funds are held safely until all conditions are met. Track every step of your transaction.</p>
           </div>
-        </div>
-      </section>
+          <div className="md:col-span-5 relative overflow-hidden rounded-2xl min-h-[400px] bg-surface-container-high">
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent" />
+            <div className="absolute bottom-8 left-8 right-8 text-white">
+              <span className="bg-secondary text-on-secondary-fixed px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 inline-block">
+                Featured Partnership
+              </span>
+              <p className="text-lg font-headline font-bold">Verified Architect Guild</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <Footer />
     </main>
   );
 }

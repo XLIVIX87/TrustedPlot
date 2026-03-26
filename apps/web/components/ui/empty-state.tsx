@@ -1,5 +1,5 @@
 interface EmptyStateProps {
-  icon?: React.ReactNode;
+  icon?: string;
   title: string;
   description?: string;
   action?: React.ReactNode;
@@ -7,11 +7,15 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   return (
-    <div className="text-center py-12">
-      {icon && <div className="text-gray-300 mb-3 flex justify-center">{icon}</div>}
-      <p className="text-gray-600 font-medium">{title}</p>
-      {description && <p className="text-sm text-gray-400 mt-1">{description}</p>}
-      {action && <div className="mt-4">{action}</div>}
+    <div className="text-center py-16">
+      {icon && (
+        <span className="material-symbols-outlined text-5xl text-outline-variant mb-4 block">
+          {icon}
+        </span>
+      )}
+      <p className="text-on-surface font-headline font-bold text-lg">{title}</p>
+      {description && <p className="text-sm text-on-surface-variant mt-2 max-w-md mx-auto">{description}</p>}
+      {action && <div className="mt-6">{action}</div>}
     </div>
   );
 }
