@@ -1,27 +1,10 @@
 import Link from 'next/link';
+import { Navbar } from '@/components/ui/navbar';
 
 export default function HomePage() {
   return (
     <main className="min-h-screen">
-      {/* Header */}
-      <header className="border-b border-border bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-xl font-semibold text-brand-dark">
-            TrustedPlot
-          </Link>
-          <nav className="flex items-center gap-4">
-            <Link href="/listings" className="text-sm text-gray-600 hover:text-brand-primary">
-              Browse
-            </Link>
-            <Link
-              href="/auth/signin"
-              className="rounded-md bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              Sign In
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero */}
       <section className="mx-auto max-w-7xl px-4 py-16">
@@ -40,56 +23,45 @@ export default function HomePage() {
             >
               Browse Verified Properties
             </Link>
+            <Link
+              href="/auth/signup"
+              className="rounded-md border border-border px-6 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              List Your Property
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Search/Filter Section */}
+      {/* Trust signals */}
       <section className="mx-auto max-w-7xl px-4 pb-16">
-        <div className="rounded-lg border border-border bg-white p-6">
-          <h2 className="text-lg font-semibold text-brand-dark mb-4">Find Properties</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-              <select className="w-full rounded-md border border-border px-3 py-2 text-sm">
-                <option value="">All Cities</option>
-                <option value="lagos">Lagos</option>
-                <option value="abuja">Abuja</option>
-              </select>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="rounded-lg border border-border bg-white p-6">
+            <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center mb-4">
+              <svg className="w-5 h-5 text-status-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Property Type</label>
-              <select className="w-full rounded-md border border-border px-3 py-2 text-sm">
-                <option value="">All Types</option>
-                <option value="apartment">Apartment</option>
-                <option value="house">House</option>
-                <option value="land">Land</option>
-                <option value="commercial">Commercial</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Price Range</label>
-              <select className="w-full rounded-md border border-border px-3 py-2 text-sm">
-                <option value="">Any Price</option>
-                <option value="0-50m">Under 50M</option>
-                <option value="50m-100m">50M - 100M</option>
-                <option value="100m-500m">100M - 500M</option>
-                <option value="500m+">500M+</option>
-              </select>
-            </div>
-            <div className="flex items-end">
-              <button className="w-full rounded-md bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
-                Search
-              </button>
-            </div>
+            <h3 className="font-semibold text-brand-dark">Verified Listings</h3>
+            <p className="text-sm text-gray-500 mt-2">Every property goes through document verification and badge assignment before buyers see it.</p>
           </div>
-        </div>
-
-        {/* Listing Grid Placeholder */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Empty state */}
-          <div className="col-span-full text-center py-12">
-            <p className="text-gray-500">No verified properties found. Adjust your filters or check back soon.</p>
+          <div className="rounded-lg border border-border bg-white p-6">
+            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mb-4">
+              <svg className="w-5 h-5 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <h3 className="font-semibold text-brand-dark">Structured Inspections</h3>
+            <p className="text-sm text-gray-500 mt-2">Book inspections with qualified inspectors. Receive standardized reports you can trust.</p>
+          </div>
+          <div className="rounded-lg border border-border bg-white p-6">
+            <div className="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center mb-4">
+              <svg className="w-5 h-5 text-status-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h3 className="font-semibold text-brand-dark">Secure Escrow</h3>
+            <p className="text-sm text-gray-500 mt-2">Funds are held safely until all conditions are met. Track every step of your transaction.</p>
           </div>
         </div>
       </section>
