@@ -34,7 +34,7 @@ export async function POST(
           submittedByInspectorUserId: session.user.id,
           summary: parsed.data.summary,
           notes: parsed.data.notes,
-          reportData: parsed.data.reportData ?? undefined,
+          reportData: parsed.data.reportData ? JSON.parse(JSON.stringify(parsed.data.reportData)) : undefined,
         },
       }),
       prisma.inspectionBooking.update({

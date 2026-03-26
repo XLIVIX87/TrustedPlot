@@ -5,8 +5,8 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY apps/web/package.json ./
-RUN npm install --production=false
+COPY apps/web/package.json ./package.json
+RUN npm install
 
 # Build the app
 FROM base AS builder
@@ -14,9 +14,12 @@ WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY apps/web/ ./
-COPY apps/web/prisma ./prisma
 
 RUN npx prisma generate --schema prisma/schema.prisma
+
+# Create public dir if it doesn't exist (Next.js requires it for standalone)
+RUN mkdir -p public
+
 RUN npm run build
 
 # Production image
