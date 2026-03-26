@@ -22,6 +22,11 @@ export async function POST(request: NextRequest) {
 
     if (!listing) return apiNotFound('Listing not found');
 
+    // Only allow escrow on verified or conditional listings
+    if (!['VERIFIED', 'CONDITIONAL'].includes(listing.status)) {
+      return apiValidationError('Escrow can only be created for verified listings');
+    }
+
     // Check for duplicate
     const existing = await prisma.escrowCase.findFirst({
       where: {

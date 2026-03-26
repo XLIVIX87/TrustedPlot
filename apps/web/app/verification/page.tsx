@@ -29,7 +29,8 @@ export default function VerificationQueuePage() {
     try {
       const res = await fetch('/api/verification/queue');
       const data = await res.json();
-      if (data.data) setCases(data.data);
+      if (data.data?.cases) setCases(data.data.cases);
+      else if (Array.isArray(data.data)) setCases(data.data);
     } catch {} finally { setLoading(false); }
   }
 

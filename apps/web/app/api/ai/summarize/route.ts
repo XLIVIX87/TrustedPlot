@@ -39,11 +39,19 @@ export async function POST(request: NextRequest) {
       return apiRateLimited('AI summary rate limit exceeded. Try again later.');
     }
 
-    // Verify document access
+    // Verify document exists and user has access
     const document = await prisma.listingDocument.findUnique({
       where: { id: parsed.data.documentId },
+      include: { listing: { include: { sellerProfile: true } } },
     });
     if (!document) return apiNotFound('Document not found');
+
+    // Only allow access if user is the seller, admin, or legal ops
+    const isOwner = document.listing.sellerProfile.userId === session.user.id;
+    const isPrivileged = ['ADMIN', 'LEGAL_OPS'].includes((session.user as any).role);
+    if (!isOwner && !isPrivileged) {
+      return apiForbidden('You do not have access to this document');
+    }
 
     const startTime = Date.now();
 

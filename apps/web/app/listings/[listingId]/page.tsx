@@ -70,9 +70,10 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
           body: JSON.stringify({ listingId: params.listingId, amount: Number(listing?.price) }),
         });
       }
-      const data = await res!.json();
-      if (res!.ok) setActionMessage(action === 'unlock' ? 'Documents unlocked!' : action === 'inspection' ? 'Inspection booked!' : `Escrow created: ${data.data?.escrowId}`);
-      else setActionMessage(data.error?.message || 'Action failed');
+      if (!res) { setActionMessage('Something went wrong'); return; }
+      const data = await res.json();
+      if (res.ok) setActionMessage(action === 'unlock' ? 'Documents unlocked!' : action === 'inspection' ? 'Inspection booked!' : `Escrow created: ${data.data?.escrowId}`);
+      else setActionMessage(data?.error?.message || 'Action failed');
     } catch { setActionMessage('Something went wrong'); }
     finally { setActionLoading(''); }
   }

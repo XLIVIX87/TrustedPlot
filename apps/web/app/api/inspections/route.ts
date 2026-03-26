@@ -18,6 +18,11 @@ export async function POST(request: NextRequest) {
     const listing = await prisma.listing.findUnique({ where: { id: parsed.data.listingId } });
     if (!listing) return apiNotFound('Listing not found');
 
+    // Only allow inspections on verified or conditional listings
+    if (!['VERIFIED', 'CONDITIONAL'].includes(listing.status)) {
+      return apiValidationError('Inspections can only be booked on verified listings');
+    }
+
     // Check for duplicate booking
     const existing = await prisma.inspectionBooking.findFirst({
       where: {

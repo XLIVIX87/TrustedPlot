@@ -21,10 +21,21 @@ export async function POST(
     const escrow = await prisma.escrowCase.findUnique({ where: { id: params.escrowId } });
     if (!escrow) return apiNotFound('Escrow not found');
 
+    // Only funded or pending_resolution escrows can be disputed
+    if (!['FUNDED', 'PENDING_RESOLUTION'].includes(escrow.status)) {
+      return apiValidationError(`Cannot dispute an escrow in ${escrow.status} status`);
+    }
+
     // Only buyer, seller, or admin can dispute
     const isParty = [escrow.buyerUserId, escrow.sellerUserId].includes(session.user.id);
-    const isAdmin = (session.user as any).role === 'ADMIN';
+    const isAdmin = session.user.role === 'ADMIN';
     if (!isParty && !isAdmin) return apiForbidden('Not authorized to dispute this escrow');
+
+    // Prevent duplicate open disputes
+    const existingDispute = await prisma.dispute.findFirst({
+      where: { escrowCaseId: params.escrowId, status: { in: ['OPEN', 'IN_REVIEW'] } },
+    });
+    if (existingDispute) return apiValidationError('An active dispute already exists for this escrow');
 
     const dispute = await prisma.dispute.create({
       data: {
