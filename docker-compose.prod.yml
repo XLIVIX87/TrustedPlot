@@ -22,7 +22,7 @@ services:
       dockerfile: apps/web/Dockerfile
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3001:3000"
+      - "127.0.0.1:3003:3000"
     environment:
       DATABASE_URL: postgresql://${DB_USER:-trustedplot}:${DB_PASSWORD}@db:5432/${DB_NAME:-trustedplot}?schema=public
       AUTH_SECRET: ${AUTH_SECRET}
