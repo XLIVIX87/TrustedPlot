@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/ui/navbar';
 import { Footer } from '@/components/ui/footer';
 import { StatusBadge } from '@/components/ui/status-badge';
@@ -18,116 +19,256 @@ interface DashboardListing {
   status: string;
   badge: string;
   createdAt: string;
+  _count?: { documents: number; inspections: number };
+}
+
+interface DashboardInspection {
+  id: string;
+  status: string;
+  slotAt: string;
+  listing: { id: string; title: string; city: string; district: string };
+}
+
+interface DashboardEscrow {
+  id: string;
+  status: string;
+  amount: string;
+  listingTitle: string;
+  createdAt: string;
 }
 
 export default function DashboardPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [listings, setListings] = useState<DashboardListing[]>([]);
+  const [inspections, setInspections] = useState<DashboardInspection[]>([]);
+  const [escrows, setEscrows] = useState<DashboardEscrow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'listings' | 'inspections' | 'escrows'>('listings');
+
+  const role = (session?.user as any)?.role;
+  const isSeller = role === 'SELLER' || role === 'MANDATE';
+  const isBuyer = role === 'BUYER';
+  const isAdmin = role === 'ADMIN';
+  const isLegal = role === 'LEGAL_OPS';
+  const isInspector = role === 'INSPECTOR';
 
   useEffect(() => {
-    async function fetchMyListings() {
+    async function fetchDashboard() {
       try {
-        const res = await fetch('/api/listings?pageSize=50');
-        const data = await res.json();
-        if (data.data) setListings(data.data.listings || []);
+        const [listingsRes, inspectionsRes] = await Promise.all([
+          fetch('/api/dashboard/listings'),
+          fetch('/api/dashboard/inspections'),
+        ]);
+        const listingsData = await listingsRes.json();
+        const inspectionsData = await inspectionsRes.json();
+
+        if (listingsData.data) {
+          setListings(listingsData.data.listings || []);
+          setEscrows(listingsData.data.escrows || []);
+        }
+        if (inspectionsData.data) setInspections(inspectionsData.data.inspections || []);
       } catch {} finally { setLoading(false); }
     }
-    fetchMyListings();
-  }, []);
+    if (session) fetchDashboard();
+    else setLoading(false);
+  }, [session]);
+
+  // Redirect admin/legal to their specific dashboards
+  useEffect(() => {
+    if (isAdmin) router.push('/admin');
+    if (isLegal) router.push('/verification');
+  }, [isAdmin, isLegal, router]);
 
   const formatPrice = (p: string) => new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(p));
+  const formatDate = (d: string) => new Date(d).toLocaleDateString('en-NG', { day: 'numeric', month: 'short' });
+
+  if (!session) return (
+    <main className="min-h-screen bg-surface">
+      <Navbar />
+      <div className="pt-32 pb-20 px-8 max-w-7xl mx-auto text-center py-20">
+        <span className="material-symbols-outlined text-5xl text-outline-variant mb-4 block">lock</span>
+        <p className="font-headline font-bold text-xl mb-4">Sign in to access your dashboard</p>
+        <Link href="/auth/signin" className="machined-gradient text-white px-8 py-3 rounded-lg font-bold text-sm tracking-widest uppercase inline-block">Sign In</Link>
+      </div>
+    </main>
+  );
 
   return (
     <main className="min-h-screen bg-surface">
       <Navbar />
-      <div className="pt-32 pb-20 px-8 max-w-[1440px] mx-auto">
-        <section className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+      <div className="pt-32 pb-20 px-6 md:px-8 max-w-[1440px] mx-auto">
+        <section className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
           <div>
-            <h2 className="text-4xl font-extrabold font-headline tracking-tighter text-on-surface mb-2">Portfolio Overview</h2>
-            <p className="text-on-surface-variant max-w-2xl">Manage your verified real estate assets and monitor acquisition inquiries in real-time within the secure digital ledger.</p>
+            <h2 className="text-4xl font-extrabold font-headline tracking-tighter text-on-surface mb-2">
+              {isSeller ? 'Portfolio Overview' : isInspector ? 'Inspector Dashboard' : 'My Dashboard'}
+            </h2>
+            <p className="text-on-surface-variant max-w-2xl">
+              {isSeller ? 'Manage your verified real estate assets and monitor acquisition inquiries.' :
+               isBuyer ? 'Track your property inspections, escrows, and saved listings.' :
+               isInspector ? 'View assigned inspections and submit reports.' :
+               'Your TrustedPlot activity overview.'}
+            </p>
           </div>
-          <Link href="/dashboard/listings/new" className="machined-gradient text-white px-8 py-3 rounded-lg font-bold text-sm tracking-widest uppercase flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
-            <span className="material-symbols-outlined text-sm">add</span>
-            New Listing
-          </Link>
+          {isSeller && (
+            <Link href="/dashboard/listings/new" className="machined-gradient text-white px-8 py-3 rounded-lg font-bold text-sm tracking-widest uppercase flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+              <span className="material-symbols-outlined text-sm">add</span>
+              New Listing
+            </Link>
+          )}
         </section>
 
         {/* Stats */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           {[
-            { icon: 'inventory_2', label: 'Total Listings', value: listings.length.toString(), tag: 'ACTIVE', tagColor: 'bg-tertiary-fixed text-on-tertiary-fixed' },
+            { icon: 'inventory_2', label: isSeller ? 'My Listings' : 'Watched Listings', value: listings.length.toString(), tag: 'ACTIVE', tagColor: 'bg-tertiary-fixed text-on-tertiary-fixed' },
             { icon: 'verified', label: 'Verified', value: listings.filter(l => l.badge !== 'NONE').length.toString(), tag: 'TRUSTED', tagColor: 'bg-secondary-fixed text-on-secondary-fixed' },
-            { icon: 'pending', label: 'Pending Review', value: listings.filter(l => ['SUBMITTED', 'UNDER_VERIFICATION'].includes(l.status)).length.toString(), tag: 'QUEUE', tagColor: 'bg-surface-container-high text-on-surface-variant' },
+            { icon: 'calendar_today', label: 'Inspections', value: inspections.length.toString(), tag: 'BOOKED', tagColor: 'bg-primary-fixed text-on-primary-fixed' },
+            { icon: 'payments', label: 'Escrows', value: escrows.length.toString(), tag: 'SECURE', tagColor: 'bg-surface-container-high text-on-surface-variant' },
           ].map(s => (
-            <div key={s.label} className="bg-surface-container-lowest p-8 rounded-xl flex flex-col gap-4 border-b-2 border-transparent hover:border-primary transition-all group">
+            <div key={s.label} className="bg-surface-container-lowest p-6 rounded-xl flex flex-col gap-3 border-b-2 border-transparent hover:border-primary transition-all group">
               <div className="flex justify-between items-start">
                 <span className="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">{s.icon}</span>
-                <span className={`text-xs font-bold px-2 py-1 rounded ${s.tagColor}`}>{s.tag}</span>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${s.tagColor}`}>{s.tag}</span>
               </div>
               <div>
                 <p className="text-3xl font-black font-headline">{s.value}</p>
-                <p className="text-sm text-on-surface-variant font-medium">{s.label}</p>
+                <p className="text-xs text-on-surface-variant font-medium">{s.label}</p>
               </div>
             </div>
           ))}
         </section>
 
-        {/* Listings */}
-        <div className="space-y-8">
-          <div className="flex justify-between items-end">
-            <h3 className="text-2xl font-bold font-headline tracking-tight">Active Inventory</h3>
-            <Link href="/listings" className="text-sm font-bold text-primary border-b border-primary/20 pb-0.5 hover:border-primary transition-all">View Ledger</Link>
-          </div>
+        {/* Tabs */}
+        <div className="flex gap-2 mb-8 border-b border-outline-variant/20">
+          {[
+            { key: 'listings' as const, label: isSeller ? 'My Listings' : 'Listings', icon: 'home', count: listings.length },
+            { key: 'inspections' as const, label: 'Inspections', icon: 'calendar_today', count: inspections.length },
+            { key: 'escrows' as const, label: 'Escrows', icon: 'payments', count: escrows.length },
+          ].map(tab => (
+            <button key={tab.key} onClick={() => setActiveTab(tab.key)}
+              className={`px-5 py-3 text-sm font-bold flex items-center gap-2 border-b-2 -mb-px transition-all ${
+                activeTab === tab.key ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-on-surface'
+              }`}>
+              <span className="material-symbols-outlined text-sm">{tab.icon}</span>
+              {tab.label}
+              <span className="text-[10px] bg-surface-container-high px-1.5 py-0.5 rounded-full">{tab.count}</span>
+            </button>
+          ))}
+        </div>
 
-          {loading ? (
-            <div className="space-y-4 animate-pulse">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="bg-surface-container-lowest rounded-xl h-32 flex overflow-hidden">
-                  <div className="w-48 bg-surface-container" />
-                  <div className="flex-1 p-6 space-y-3">
-                    <div className="h-5 bg-surface-container-high rounded w-3/4" />
-                    <div className="h-4 bg-surface-container-high rounded w-1/2" />
-                  </div>
+        {/* Content */}
+        {loading ? (
+          <div className="space-y-4 animate-pulse">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="bg-surface-container-lowest rounded-xl h-28 flex overflow-hidden">
+                <div className="w-40 bg-surface-container" />
+                <div className="flex-1 p-6 space-y-3">
+                  <div className="h-5 bg-surface-container-high rounded w-3/4" />
+                  <div className="h-4 bg-surface-container-high rounded w-1/2" />
                 </div>
-              ))}
-            </div>
-          ) : listings.length === 0 ? (
-            <EmptyState
-              icon="add_home"
-              title="No listings yet"
-              description="Create your first listing to begin the verification process."
-              action={
-                <Link href="/dashboard/listings/new" className="machined-gradient text-white px-8 py-3 rounded-lg font-bold text-sm tracking-widest uppercase inline-block">
-                  Create First Listing
-                </Link>
-              }
-            />
+              </div>
+            ))}
+          </div>
+        ) : activeTab === 'listings' ? (
+          listings.length === 0 ? (
+            <EmptyState icon="add_home" title={isSeller ? 'No listings yet' : 'No listings found'}
+              description={isSeller ? 'Create your first listing to begin the verification process.' : 'Properties linked to your inspections or escrows will appear here.'}
+              action={isSeller ? (
+                <Link href="/dashboard/listings/new" className="machined-gradient text-white px-8 py-3 rounded-lg font-bold text-sm tracking-widest uppercase inline-block">Create First Listing</Link>
+              ) : (
+                <Link href="/listings" className="machined-gradient text-white px-8 py-3 rounded-lg font-bold text-sm tracking-widest uppercase inline-block">Browse Listings</Link>
+              )} />
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {listings.map(listing => (
                 <Link key={listing.id} href={`/listings/${listing.id}`} className="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col sm:flex-row group border border-transparent hover:border-outline-variant transition-all">
-                  <div className="sm:w-48 h-32 bg-surface-container-low flex items-center justify-center shrink-0">
+                  <div className="sm:w-40 h-28 bg-surface-container-low flex items-center justify-center shrink-0">
                     <span className="material-symbols-outlined text-4xl text-outline-variant">landscape</span>
                   </div>
-                  <div className="p-6 flex-1 flex justify-between items-center">
+                  <div className="p-5 flex-1 flex justify-between items-center">
                     <div>
-                      <h4 className="text-lg font-bold font-headline leading-tight group-hover:underline decoration-2 underline-offset-4">{listing.title}</h4>
+                      <h4 className="text-base font-bold font-headline leading-tight group-hover:underline decoration-2 underline-offset-4">{listing.title}</h4>
                       <p className="text-sm text-on-surface-variant">{listing.city}, {listing.district}</p>
-                      <div className="flex gap-3 mt-2">
+                      <div className="flex gap-2 mt-2">
                         <VerificationBadge badge={listing.badge} />
                         <StatusBadge status={listing.status} />
                       </div>
                     </div>
-                    <div className="text-right flex flex-col items-end gap-2">
+                    <div className="text-right flex flex-col items-end gap-1">
                       <span className="text-lg font-black font-headline">{formatPrice(listing.price)}</span>
+                      <span className="text-[10px] text-on-surface-variant">{formatDate(listing.createdAt)}</span>
+                      {isSeller && listing.status === 'DRAFT' && (
+                        <Link href={`/listings/${listing.id}`} onClick={e => e.stopPropagation()}
+                          className="text-[10px] font-bold text-primary bg-primary-fixed/20 px-2 py-0.5 rounded mt-1">
+                          Submit for Verification
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </Link>
               ))}
             </div>
-          )}
-        </div>
+          )
+        ) : activeTab === 'inspections' ? (
+          inspections.length === 0 ? (
+            <EmptyState icon="event_busy" title="No inspections yet"
+              description="Book an inspection from a listing detail page."
+              action={<Link href="/listings" className="machined-gradient text-white px-8 py-3 rounded-lg font-bold text-sm tracking-widest uppercase inline-block">Browse Listings</Link>} />
+          ) : (
+            <div className="space-y-3">
+              {inspections.map(insp => (
+                <Link key={insp.id} href={`/listings/${insp.listing.id}`}
+                  className="bg-surface-container-lowest rounded-xl p-5 flex items-center gap-4 group border border-transparent hover:border-outline-variant transition-all">
+                  <div className="w-14 h-14 bg-primary-container rounded-lg flex flex-col items-center justify-center shrink-0">
+                    <span className="text-lg font-black text-white">{new Date(insp.slotAt).getDate()}</span>
+                    <span className="text-[9px] font-bold text-white/70 uppercase">{new Date(insp.slotAt).toLocaleDateString('en-NG', { month: 'short' })}</span>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold font-headline group-hover:underline">{insp.listing.title}</h4>
+                    <p className="text-xs text-on-surface-variant">{new Date(insp.slotAt).toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit' })}</p>
+                  </div>
+                  <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${
+                    insp.status === 'COMPLETED' ? 'bg-tertiary-fixed/20 text-on-tertiary-fixed' :
+                    insp.status === 'CONFIRMED' ? 'bg-primary-fixed/20 text-primary' :
+                    'bg-secondary-fixed/20 text-on-secondary-fixed'
+                  }`}>{insp.status}</span>
+                </Link>
+              ))}
+            </div>
+          )
+        ) : (
+          escrows.length === 0 ? (
+            <EmptyState icon="payments" title="No escrows yet"
+              description="Start an escrow from a listing to begin a secure transaction."
+              action={<Link href="/listings" className="machined-gradient text-white px-8 py-3 rounded-lg font-bold text-sm tracking-widest uppercase inline-block">Browse Listings</Link>} />
+          ) : (
+            <div className="space-y-3">
+              {escrows.map(esc => (
+                <Link key={esc.id} href={`/escrow/${esc.id}`}
+                  className="bg-surface-container-lowest rounded-xl p-5 flex items-center justify-between group border border-transparent hover:border-outline-variant transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-surface-container-high rounded-lg flex items-center justify-center">
+                      <span className="material-symbols-outlined text-primary">payments</span>
+                    </div>
+                    <div>
+                      <h4 className="font-bold font-headline group-hover:underline">{esc.listingTitle}</h4>
+                      <p className="text-xs text-on-surface-variant">{formatDate(esc.createdAt)}</p>
+                    </div>
+                  </div>
+                  <div className="text-right flex items-center gap-4">
+                    <span className="text-lg font-black font-headline">{formatPrice(esc.amount)}</span>
+                    <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${
+                      esc.status === 'FUNDED' ? 'bg-tertiary-fixed/20 text-on-tertiary-fixed' :
+                      esc.status === 'DISPUTED' ? 'bg-error-container text-on-error-container' :
+                      'bg-secondary-fixed/20 text-on-secondary-fixed'
+                    }`}>{esc.status}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )
+        )}
       </div>
       <Footer />
     </main>

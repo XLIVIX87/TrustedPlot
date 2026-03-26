@@ -141,17 +141,17 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
           {/* Main */}
           <div className="lg:col-span-8 space-y-12">
             <div className="space-y-4">
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                 <div>
-                  <h1 className="text-4xl md:text-5xl font-headline font-extrabold tracking-tight text-on-surface mb-2">{listing.title}</h1>
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-headline font-extrabold tracking-tight text-on-surface mb-2">{listing.title}</h1>
                   <div className="flex items-center gap-2 text-on-surface-variant font-medium">
                     <span className="material-symbols-outlined text-sm">location_on</span>
                     <span>{listing.city}, {listing.district}</span>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="sm:text-right shrink-0">
                   <p className="text-sm font-label uppercase tracking-widest text-on-surface-variant mb-1">Acquisition Price</p>
-                  <p className="text-3xl font-headline font-black text-primary">{formatPrice(listing.price)}</p>
+                  <p className="text-2xl sm:text-3xl font-headline font-black text-primary">{formatPrice(listing.price)}</p>
                 </div>
               </div>
               <div className="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/10">

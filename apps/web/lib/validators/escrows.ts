@@ -6,7 +6,7 @@ export const createEscrowSchema = z.object({
 });
 
 export const fundEscrowSchema = z.object({
-  paymentMethod: z.enum(['TRANSFER', 'CARD']),
+  paymentMethod: z.enum(['TRANSFER', 'CARD']).optional().default('TRANSFER'),
   idempotencyKey: z.string().min(1).optional(),
 });
 

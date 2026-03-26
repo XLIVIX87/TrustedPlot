@@ -7,10 +7,10 @@ export default function HomePage() {
     <main className="min-h-screen bg-surface font-body text-on-surface">
       <Navbar />
 
-      <div className="pt-32 pb-20 px-8 max-w-[1440px] mx-auto">
+      <div className="pt-24 md:pt-32 pb-20 px-4 md:px-8 max-w-[1440px] mx-auto">
         {/* Discovery Header */}
         <section className="mb-12">
-          <h1 className="text-5xl md:text-6xl font-headline font-extrabold tracking-tight text-primary mb-4">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-headline font-extrabold tracking-tight text-primary mb-4">
             Verified Land <br />
             <span className="text-on-surface-variant">Architecture.</span>
           </h1>
