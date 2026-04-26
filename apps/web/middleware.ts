@@ -4,6 +4,8 @@ import { NextResponse } from 'next/server';
 const PROTECTED_ROUTES = ['/dashboard', '/inspections', '/escrow', '/documents'];
 const ADMIN_ROUTES = ['/admin'];
 const LEGAL_ROUTES = ['/verification'];
+// Routes that should redirect logged-in users away (signin, signup).
+// /auth/forgot-password is intentionally accessible to logged-in users too.
 const AUTH_ROUTES = ['/auth/signin', '/auth/signup'];
 
 export default auth((req) => {

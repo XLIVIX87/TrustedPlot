@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Navbar } from '@/components/ui/navbar';
 import { Footer } from '@/components/ui/footer';
@@ -23,17 +24,25 @@ interface ListingDetail {
   badge: string;
   documentsAvailable: boolean;
   sellerProfile: { displayName: string; sellerType: string };
-  media: { url: string; mediaType: string }[];
+  media: { url: string; mediaType: string; altText?: string | null }[];
   _count?: { documents: number; inspections: number };
 }
 
 export default function ListingDetailPage({ params }: { params: { listingId: string } }) {
   const { data: session } = useSession();
+  const router = useRouter();
   const [listing, setListing] = useState<ListingDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionLoading, setActionLoading] = useState('');
   const [actionMessage, setActionMessage] = useState('');
+  const [activePhoto, setActivePhoto] = useState(0);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [inspectionDate, setInspectionDate] = useState(() => {
+    const d = new Date(Date.now() + 3 * 86400000);
+    d.setHours(10, 0, 0, 0);
+    return d.toISOString().slice(0, 16);
+  });
 
   useEffect(() => {
     async function fetchListing() {
@@ -61,7 +70,7 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
         res = await fetch('/api/inspections', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ listingId: params.listingId, slotAt: new Date(Date.now() + 3 * 86400000).toISOString() }),
+          body: JSON.stringify({ listingId: params.listingId, slotAt: new Date(inspectionDate).toISOString() }),
         });
       } else if (action === 'escrow') {
         res = await fetch('/api/escrows', {
@@ -72,8 +81,17 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
       }
       if (!res) { setActionMessage('Something went wrong'); return; }
       const data = await res.json();
-      if (res.ok) setActionMessage(action === 'unlock' ? 'Documents unlocked!' : action === 'inspection' ? 'Inspection booked!' : `Escrow created: ${data.data?.escrowId}`);
-      else setActionMessage(data?.error?.message || 'Action failed');
+      if (res.ok) {
+        if (action === 'unlock') setActionMessage('Documents unlocked!');
+        else if (action === 'inspection') {
+          setActionMessage('Inspection booked! Redirecting…');
+          setShowDatePicker(false);
+          setTimeout(() => router.push('/inspections'), 800);
+        } else if (action === 'escrow' && data.data?.escrowId) {
+          setActionMessage(`Escrow created. Redirecting…`);
+          setTimeout(() => router.push(`/escrow/${data.data.escrowId}`), 600);
+        }
+      } else setActionMessage(data?.error?.message || 'Action failed');
     } catch { setActionMessage('Something went wrong'); }
     finally { setActionLoading(''); }
   }
@@ -111,8 +129,8 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
         {/* Gallery */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
           <div className="lg:col-span-8 rounded-xl overflow-hidden aspect-[16/9] relative group shadow-sm bg-surface-container-low">
-            {listing.media?.[0] ? (
-              <img src={listing.media[0].url} alt={listing.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            {listing.media?.[activePhoto] ? (
+              <img src={listing.media[activePhoto].url} alt={listing.media[activePhoto].altText || listing.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <span className="material-symbols-outlined text-6xl text-outline-variant">landscape</span>
@@ -121,14 +139,38 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
             <div className="absolute top-6 left-6 flex gap-3">
               <VerificationBadge badge={listing.badge} />
             </div>
+            {listing.media && listing.media.length > 1 && (
+              <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm text-white text-xs font-label px-3 py-1.5 rounded-full">
+                {activePhoto + 1} / {listing.media.length}
+              </div>
+            )}
           </div>
           <div className="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-4">
-            <div className="rounded-xl overflow-hidden aspect-square lg:aspect-[4/3] bg-surface-container-low flex items-center justify-center">
-              <span className="material-symbols-outlined text-4xl text-outline-variant">image</span>
-            </div>
-            <div className="rounded-xl overflow-hidden aspect-square lg:aspect-[4/3] relative bg-surface-container-low flex items-center justify-center">
-              <span className="text-on-surface-variant font-headline font-bold text-xl">+Photos</span>
-            </div>
+            {listing.media && listing.media.length > 1 ? (
+              listing.media.slice(1, 3).map((m, i) => {
+                const idx = i + 1;
+                const isLastVisible = i === 1 && listing.media.length > 3;
+                return (
+                  <button key={idx} onClick={() => setActivePhoto(idx)} className="rounded-xl overflow-hidden aspect-square lg:aspect-[4/3] relative group bg-surface-container-low">
+                    <img src={m.url} alt={m.altText || ''} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    {isLastVisible && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <span className="text-white font-headline font-bold text-xl">+{listing.media.length - 3}</span>
+                      </div>
+                    )}
+                  </button>
+                );
+              })
+            ) : (
+              <>
+                <div className="rounded-xl overflow-hidden aspect-square lg:aspect-[4/3] bg-surface-container-low flex items-center justify-center">
+                  <span className="material-symbols-outlined text-4xl text-outline-variant">image</span>
+                </div>
+                <div className="rounded-xl overflow-hidden aspect-square lg:aspect-[4/3] relative bg-surface-container-low flex items-center justify-center">
+                  <span className="text-on-surface-variant font-headline font-bold text-xl">No photos</span>
+                </div>
+              </>
+            )}
           </div>
         </section>
 
@@ -209,11 +251,26 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
               <div className="bg-surface-container-lowest p-8 rounded-xl shadow-lg border border-outline-variant/10">
                 {session ? (
                   <>
-                    <button onClick={() => handleAction('inspection')} disabled={actionLoading === 'inspection'}
-                      className="w-full py-4 machined-gradient text-white rounded-lg font-headline font-bold text-sm uppercase tracking-widest shadow-md hover:shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2 mb-4 disabled:opacity-50">
-                      <span className="material-symbols-outlined text-sm">calendar_today</span>
-                      {actionLoading === 'inspection' ? 'Booking...' : 'Book Inspection'}
-                    </button>
+                    {showDatePicker ? (
+                      <div className="mb-4 p-4 bg-surface-container-low rounded-lg space-y-3">
+                        <label className="block text-xs font-label uppercase tracking-wider text-on-surface-variant">Choose date & time</label>
+                        <input type="datetime-local" value={inspectionDate} onChange={e => setInspectionDate(e.target.value)} min={new Date(Date.now() + 24 * 3600 * 1000).toISOString().slice(0, 16)}
+                          className="w-full px-3 py-2 rounded-lg border border-outline-variant bg-white text-sm font-medium" />
+                        <div className="flex gap-2">
+                          <button onClick={() => handleAction('inspection')} disabled={actionLoading === 'inspection'}
+                            className="flex-1 py-3 machined-gradient text-white rounded-lg font-headline font-bold text-xs uppercase tracking-widest shadow-md hover:shadow-xl transition-all disabled:opacity-50">
+                            {actionLoading === 'inspection' ? 'Booking...' : 'Confirm'}
+                          </button>
+                          <button onClick={() => setShowDatePicker(false)} className="px-4 py-3 bg-surface-container-high rounded-lg text-xs uppercase tracking-widest font-headline font-bold">Cancel</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button onClick={() => setShowDatePicker(true)}
+                        className="w-full py-4 machined-gradient text-white rounded-lg font-headline font-bold text-sm uppercase tracking-widest shadow-md hover:shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2 mb-4">
+                        <span className="material-symbols-outlined text-sm">calendar_today</span>
+                        Book Inspection
+                      </button>
+                    )}
                     <button onClick={() => handleAction('unlock')} disabled={actionLoading === 'unlock'}
                       className="w-full py-4 bg-surface-container-high text-on-surface font-headline font-bold text-sm uppercase tracking-widest rounded-lg flex items-center justify-center gap-2 mb-4 hover:bg-surface-container-highest transition-all disabled:opacity-50">
                       <span className="material-symbols-outlined text-sm">lock_open</span>
@@ -226,7 +283,7 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
                     </button>
                   </>
                 ) : (
-                  <Link href="/auth/signin" className="w-full py-4 machined-gradient text-white rounded-lg font-headline font-bold text-sm uppercase tracking-widest shadow-md block text-center">
+                  <Link href={`/auth/signin?callbackUrl=${encodeURIComponent(`/listings/${params.listingId}`)}`} className="w-full py-4 machined-gradient text-white rounded-lg font-headline font-bold text-sm uppercase tracking-widest shadow-md block text-center">
                     Sign In to Take Action
                   </Link>
                 )}

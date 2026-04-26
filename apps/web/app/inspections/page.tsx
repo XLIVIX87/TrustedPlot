@@ -136,8 +136,13 @@ export default function InspectionsPage() {
                         </p>
                       )}
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-wrap">
                       <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${style.bg} ${style.text}`}>{style.label}</span>
+                      {(session?.user as any)?.role === 'INSPECTOR' && !inspection.hasReport && ['CONFIRMED', 'IN_PROGRESS', 'ASSIGNED'].includes(inspection.status) && (
+                        <Link href={`/inspections/${inspection.id}/report`} className="text-xs font-bold text-white machined-gradient px-3 py-1.5 rounded-full hover:opacity-90 flex items-center gap-1">
+                          <span className="material-symbols-outlined text-xs">edit_note</span> Submit Report
+                        </Link>
+                      )}
                       <Link href={`/listings/${inspection.listing.id}`} className="text-primary hover:underline text-sm font-bold flex items-center gap-1">
                         View <span className="material-symbols-outlined text-sm">arrow_forward</span>
                       </Link>

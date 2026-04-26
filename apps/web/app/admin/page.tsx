@@ -75,6 +75,13 @@ export default function AdminDashboardPage() {
           </div>
           <div className="flex gap-3">
             <Link
+              href="/admin/users"
+              className="px-6 py-3 rounded-lg text-sm font-bold text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-all flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined text-sm">group</span>
+              Users
+            </Link>
+            <Link
               href="/verification"
               className="px-6 py-3 rounded-lg text-sm font-bold text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-all flex items-center gap-2"
             >
