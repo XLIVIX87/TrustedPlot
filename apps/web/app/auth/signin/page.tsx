@@ -10,7 +10,7 @@ const DEMO_ACCOUNTS = [
   { label: 'Seller',    email: 'seller@trustedplot.com',    icon: 'storefront' },
   { label: 'Inspector', email: 'inspector@trustedplot.com', icon: 'home_search' },
   { label: 'Legal',     email: 'legal@trustedplot.com',     icon: 'gavel' },
-  { label: 'Admin',     email: 'admin@trustedplot.com',     icon: 'shield_person' },
+  { label: 'Admin',     email: 'admin@trustedplot.com',     icon: 'admin_panel_settings' },
   { label: 'Mandate',   email: 'mandate@trustedplot.com',   icon: 'badge' },
 ];
 

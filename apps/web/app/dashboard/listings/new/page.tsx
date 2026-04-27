@@ -331,8 +331,8 @@ export default function NewListingPage() {
                   )}
 
                   {!hasRequired && documents.length > 0 && (
-                    <p className="text-xs text-secondary font-bold mt-2 flex items-center gap-1">
-                      <span className="material-symbols-outlined text-xs">info</span>
+                    <p className="text-xs text-amber-700 font-bold mt-2 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>info</span>
                       Certificate of Occupancy is required for verification
                     </p>
                   )}
@@ -439,21 +439,21 @@ export default function NewListingPage() {
                 <h3 className="text-lg font-black font-headline text-white tracking-tight">Trust Guidelines</h3>
                 <div className="space-y-6">
                   <div className="flex gap-4">
-                    <span className="material-symbols-outlined text-secondary-fixed shrink-0">visibility</span>
+                    <span className="material-symbols-outlined text-secondary-container shrink-0">visibility</span>
                     <div>
                       <h4 className="text-sm font-bold text-white">Visual Clarity</h4>
                       <p className="text-xs mt-1 text-on-primary-container/80 leading-relaxed">Ensure all stamps and signatures on your C of O are clearly visible.</p>
                     </div>
                   </div>
                   <div className="flex gap-4">
-                    <span className="material-symbols-outlined text-secondary-fixed shrink-0">verified</span>
+                    <span className="material-symbols-outlined text-secondary-container shrink-0">verified</span>
                     <div>
                       <h4 className="text-sm font-bold text-white">Metadata Match</h4>
                       <p className="text-xs mt-1 text-on-primary-container/80 leading-relaxed">The address entered must match the registered survey plan exactly.</p>
                     </div>
                   </div>
                   <div className="flex gap-4">
-                    <span className="material-symbols-outlined text-secondary-fixed shrink-0">lock_reset</span>
+                    <span className="material-symbols-outlined text-secondary-container shrink-0">lock_reset</span>
                     <div>
                       <h4 className="text-sm font-bold text-white">Escrow Protocol</h4>
                       <p className="text-xs mt-1 text-on-primary-container/80 leading-relaxed">TrustedPlot holds all listing fees in a secure ledger until verification is complete.</p>

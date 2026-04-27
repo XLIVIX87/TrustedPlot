@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Navbar } from '@/components/ui/navbar';
 import { Footer } from '@/components/ui/footer';
+import { AdminSidebar } from '@/components/ui/admin-sidebar';
 
 interface UserRow {
   id: string;
@@ -76,14 +77,15 @@ export default function AdminUsersPage() {
   return (
     <main className="min-h-screen bg-surface">
       <Navbar />
-      <div className="pt-32 pb-20 px-6 md:px-8 max-w-[1440px] mx-auto">
-        <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
+      <div className="pt-28 pb-20 px-4 md:px-8 max-w-[1440px] mx-auto">
+        <div className="flex gap-8 items-start">
+          <AdminSidebar />
+          <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between mb-8 flex-wrap gap-4 animate-fade-in-up">
           <div>
-            <Link href="/admin" className="text-sm text-on-surface-variant hover:text-primary mb-2 inline-flex items-center gap-1">
-              <span className="material-symbols-outlined text-sm">arrow_back</span> Back to admin
-            </Link>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Operations</p>
             <h1 className="text-3xl md:text-4xl font-headline font-extrabold tracking-tight">User Management</h1>
-            <p className="text-on-surface-variant mt-1">{total} total users</p>
+            <p className="text-on-surface-variant text-sm mt-1">{total} total users</p>
           </div>
         </div>
 
@@ -150,7 +152,7 @@ export default function AdminUsersPage() {
                             <div className="text-xs text-on-surface-variant">{u.email}</div>
                             {u.sellerProfile && (
                               <div className="text-[10px] text-on-surface-variant mt-0.5">
-                                {u.sellerProfile.displayName} · KYC: <span className={u.sellerProfile.kycStatus === 'VERIFIED' ? 'text-tertiary' : 'text-on-surface-variant'}>{u.sellerProfile.kycStatus}</span>
+                                {u.sellerProfile.displayName} · KYC: <span className={u.sellerProfile.kycStatus === 'VERIFIED' ? 'text-emerald-700 font-bold' : 'text-on-surface-variant'}>{u.sellerProfile.kycStatus}</span>
                               </div>
                             )}
                           </div>
@@ -195,6 +197,8 @@ export default function AdminUsersPage() {
             </div>
           </div>
         )}
+          </div>{/* end flex-1 */}
+        </div>{/* end flex gap-8 */}
       </div>
       <Footer />
     </main>

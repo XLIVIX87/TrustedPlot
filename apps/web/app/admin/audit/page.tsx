@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/ui/navbar';
 import { Footer } from '@/components/ui/footer';
+import { AdminSidebar } from '@/components/ui/admin-sidebar';
 
 interface AuditEntry {
   id: string;
@@ -45,13 +46,17 @@ export default function AuditLogPage() {
   return (
     <main className="min-h-screen bg-surface">
       <Navbar />
-      <div className="pt-32 pb-20 px-8 max-w-[1440px] mx-auto">
+      <div className="pt-28 pb-20 px-4 md:px-8 max-w-[1440px] mx-auto">
+        <div className="flex gap-8 items-start">
+          <AdminSidebar />
+          <div className="flex-1 min-w-0">
         {/* Page header */}
-        <section className="mb-12">
-          <h1 className="text-4xl font-extrabold font-headline tracking-tighter text-on-surface mb-2">
+        <section className="mb-8 animate-fade-in-up">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Compliance</p>
+          <h1 className="text-3xl font-extrabold font-headline tracking-tighter text-on-surface mb-2">
             Audit Log
           </h1>
-          <p className="text-on-surface-variant max-w-2xl">
+          <p className="text-on-surface-variant text-sm max-w-2xl">
             Complete record of platform activity for compliance review and forensic analysis.
           </p>
         </section>
@@ -98,7 +103,7 @@ export default function AuditLogPage() {
               </select>
             </div>
             <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-on-surface-variant text-sm">database</span>
+              <span className="material-symbols-outlined text-on-surface-variant text-sm">storage</span>
               <span className="text-sm text-on-surface-variant font-medium">{total} total entries</span>
             </div>
           </div>
@@ -168,6 +173,8 @@ export default function AuditLogPage() {
             </>
           )}
         </div>
+          </div>{/* end flex-1 */}
+        </div>{/* end flex gap-8 */}
       </div>
       <Footer />
     </main>

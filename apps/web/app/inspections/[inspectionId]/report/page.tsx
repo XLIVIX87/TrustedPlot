@@ -151,9 +151,9 @@ export default function InspectionReportPage({ params }: { params: { inspectionI
         </div>
 
         {reportAlreadySubmitted ? (
-          <div className="bg-tertiary-fixed/20 rounded-xl p-6 border-l-4 border-tertiary">
+          <div className="bg-emerald-50 rounded-xl p-6 border-l-4 border-emerald-500">
             <div className="flex items-start gap-3">
-              <span className="material-symbols-outlined text-tertiary">check_circle</span>
+              <span className="material-symbols-outlined text-emerald-600" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
               <div>
                 <h3 className="font-headline font-bold mb-2">Report already submitted</h3>
                 <p className="text-sm text-on-surface-variant mb-3">This inspection was reported on {new Date(inspection.report!.createdAt).toLocaleDateString('en-NG', { dateStyle: 'long' })}.</p>

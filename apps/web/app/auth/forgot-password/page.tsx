@@ -35,8 +35,8 @@ export default function ForgotPasswordPage() {
         <div className="bg-surface-container-lowest rounded-xl p-10 shadow-sm border border-outline-variant/10">
           {submitted ? (
             <div className="text-center space-y-6">
-              <div className="w-16 h-16 rounded-full bg-tertiary-fixed/30 mx-auto flex items-center justify-center">
-                <span className="material-symbols-outlined text-tertiary text-3xl">mark_email_read</span>
+              <div className="w-16 h-16 rounded-full bg-emerald-100 mx-auto flex items-center justify-center">
+                <span className="material-symbols-outlined text-emerald-600 text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>mark_email_read</span>
               </div>
               <div>
                 <h2 className="font-headline font-bold text-xl mb-2">Check your inbox</h2>

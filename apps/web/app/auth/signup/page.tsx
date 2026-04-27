@@ -12,7 +12,7 @@ const ROLE_OPTIONS = [
 ];
 
 const PLATFORM_POINTS = [
-  { icon: 'shield_check',     text: 'Institutional-grade document vaulting' },
+  { icon: 'gpp_good',          text: 'Institutional-grade document vaulting' },
   { icon: 'home_search',      text: 'Physical on-site inspection reports' },
   { icon: 'account_balance',  text: 'Escrow-backed secure transactions' },
   { icon: 'verified',         text: 'C of O & R of O badge verification' },
