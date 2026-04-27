@@ -19,6 +19,7 @@ interface DashboardListing {
   status: string;
   badge: string;
   createdAt: string;
+  coverImage?: { url: string } | null;
   _count?: { documents: number; inspections: number };
 }
 
@@ -26,6 +27,7 @@ interface DashboardInspection {
   id: string;
   status: string;
   slotAt: string;
+  hasReport: boolean;
   listing: { id: string; title: string; city: string; district: string };
 }
 
@@ -183,8 +185,12 @@ export default function DashboardPage() {
             <div className="space-y-3">
               {listings.map(listing => (
                 <Link key={listing.id} href={`/listings/${listing.id}`} className="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col sm:flex-row group border border-transparent hover:border-outline-variant transition-all">
-                  <div className="sm:w-40 h-28 bg-surface-container-low flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined text-4xl text-outline-variant">landscape</span>
+                  <div className="sm:w-40 h-28 bg-surface-container-low flex items-center justify-center shrink-0 overflow-hidden">
+                    {listing.coverImage?.url ? (
+                      <img src={listing.coverImage.url} alt={listing.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="material-symbols-outlined text-4xl text-outline-variant">landscape</span>
+                    )}
                   </div>
                   <div className="p-5 flex-1 flex justify-between items-center">
                     <div>
@@ -218,22 +224,29 @@ export default function DashboardPage() {
           ) : (
             <div className="space-y-3">
               {inspections.map(insp => (
-                <Link key={insp.id} href={`/listings/${insp.listing.id}`}
-                  className="bg-surface-container-lowest rounded-xl p-5 flex items-center gap-4 group border border-transparent hover:border-outline-variant transition-all">
+                <div key={insp.id} className="bg-surface-container-lowest rounded-xl p-5 flex items-center gap-4 border border-transparent hover:border-outline-variant transition-all">
                   <div className="w-14 h-14 bg-primary-container rounded-lg flex flex-col items-center justify-center shrink-0">
                     <span className="text-lg font-black text-white">{new Date(insp.slotAt).getDate()}</span>
                     <span className="text-[9px] font-bold text-white/70 uppercase">{new Date(insp.slotAt).toLocaleDateString('en-NG', { month: 'short' })}</span>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-bold font-headline group-hover:underline">{insp.listing.title}</h4>
-                    <p className="text-xs text-on-surface-variant">{new Date(insp.slotAt).toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit' })}</p>
+                  <div className="flex-1 min-w-0">
+                    <Link href={`/listings/${insp.listing.id}`} className="font-bold font-headline hover:underline block truncate">{insp.listing.title}</Link>
+                    <p className="text-xs text-on-surface-variant">{insp.listing.city}, {insp.listing.district} · {new Date(insp.slotAt).toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit' })}</p>
                   </div>
-                  <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${
-                    insp.status === 'COMPLETED' ? 'bg-tertiary-fixed/20 text-on-tertiary-fixed' :
-                    insp.status === 'CONFIRMED' ? 'bg-primary-fixed/20 text-primary' :
-                    'bg-secondary-fixed/20 text-on-secondary-fixed'
-                  }`}>{insp.status}</span>
-                </Link>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${
+                      insp.status === 'COMPLETED' ? 'bg-tertiary-fixed/20 text-on-tertiary-fixed' :
+                      insp.status === 'CONFIRMED' ? 'bg-primary-fixed/20 text-primary' :
+                      'bg-secondary-fixed/20 text-on-secondary-fixed'
+                    }`}>{insp.status}</span>
+                    {isInspector && !insp.hasReport && insp.status === 'CONFIRMED' && (
+                      <Link href={`/inspections/${insp.id}/report`}
+                        className="text-[10px] font-bold machined-gradient text-white px-2 py-1 rounded-full flex items-center gap-1">
+                        <span className="material-symbols-outlined text-xs">edit_note</span> Report
+                      </Link>
+                    )}
+                  </div>
+                </div>
               ))}
             </div>
           )
