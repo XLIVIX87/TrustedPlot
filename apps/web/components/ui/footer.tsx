@@ -3,12 +3,30 @@ export function Footer() {
     <footer className="bg-slate-900 text-slate-300 py-12 px-4 md:px-8 border-t border-slate-800">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-7xl mx-auto">
         <div className="flex flex-col gap-6">
-          <div className="text-white font-headline font-black tracking-widest uppercase text-xl">
-            TrustedPlot
+          {/* Logo mark */}
+          <div className="flex items-center gap-2.5">
+            <svg width="28" height="28" viewBox="0 0 30 30" fill="none" className="text-white shrink-0" aria-hidden="true">
+              <path d="M15 2L3 8v9c0 6.6 4.8 12.8 12 14.9C22.2 29.8 27 23.6 27 17V8L15 2z"
+                fill="white" fillOpacity="0.12" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
+              <path d="M10 15.5l3.5 3.5L21 11.5"
+                stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span className="text-white font-headline font-black tracking-tighter text-xl">TrustedPlot</span>
           </div>
           <p className="text-xs leading-relaxed opacity-70">
             The Digital Architect Ledger. Institutional-grade verification for the next generation of real estate assets.
           </p>
+          {/* Trust badges */}
+          <div className="flex gap-3">
+            <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5">
+              <span className="material-symbols-outlined text-amber-400 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+              <span className="text-[10px] text-white/70 font-bold uppercase tracking-wider">C of O</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5">
+              <span className="material-symbols-outlined text-emerald-400 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
+              <span className="text-[10px] text-white/70 font-bold uppercase tracking-wider">Escrow</span>
+            </div>
+          </div>
         </div>
         <div className="flex flex-col gap-4">
           <h4 className="text-white font-bold text-sm">Ecosystem</h4>

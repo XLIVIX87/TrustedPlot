@@ -3,8 +3,18 @@ import { Providers } from '@/components/providers';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'TrustedPlot - Trust-First Real Estate',
-  description: 'Verified listings, structured inspections, and secure transactions for Nigerian real estate.',
+  title: 'TrustedPlot — Verified Real Estate in Nigeria',
+  description: 'Browse legally verified properties in Lagos and Abuja with C of O documentation, on-site inspections, and escrow-protected transactions.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+  },
+  openGraph: {
+    title: 'TrustedPlot — Verified Real Estate in Nigeria',
+    description: 'Trust-first property discovery. Every listing verified. Every transaction escrow-protected.',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({

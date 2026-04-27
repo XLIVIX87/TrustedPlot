@@ -35,8 +35,17 @@ export function Navbar() {
       <header className="fixed top-0 w-full z-50 glass-header border-b border-slate-200/20 shadow-sm">
         <div className="flex justify-between items-center px-4 md:px-8 h-16 md:h-20 max-w-full">
           <div className="flex items-center gap-4 md:gap-8">
-            <Link href="/" className="text-xl md:text-2xl font-black text-slate-900 tracking-tighter font-headline">
-              TrustedPlot
+            <Link href="/" className="flex items-center gap-2.5 group">
+              {/* Shield logo mark */}
+              <svg width="30" height="30" viewBox="0 0 30 30" fill="none" className="text-slate-900 shrink-0" aria-hidden="true">
+                <path d="M15 2L3 8v9c0 6.6 4.8 12.8 12 14.9C22.2 29.8 27 23.6 27 17V8L15 2z"
+                  fill="currentColor" fillOpacity="0.1" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                <path d="M10 15.5l3.5 3.5L21 11.5"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span className="text-xl md:text-2xl font-black text-slate-900 tracking-tighter font-headline">
+                TrustedPlot
+              </span>
             </Link>
             <nav className="hidden md:flex gap-8 items-center">
               {navLinks.map(link => (
@@ -50,14 +59,18 @@ export function Navbar() {
           <div className="flex items-center gap-3">
             {status === 'authenticated' ? (
               <>
-                <span className="hidden lg:flex items-center gap-2 text-sm">
-                  <span className="text-on-surface-variant font-headline font-bold">{user?.name}</span>
-                  <span className="bg-secondary-fixed text-on-secondary-fixed px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                    {role}
-                  </span>
-                </span>
+                {/* User avatar + name */}
+                <div className="hidden sm:flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white text-xs font-black shrink-0">
+                    {(user?.name || user?.email || '?').charAt(0).toUpperCase()}
+                  </div>
+                  <div className="hidden lg:block">
+                    <p className="text-xs font-bold text-slate-900 leading-none mb-0.5">{user?.name || user?.email}</p>
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{role?.replace('_', ' ')}</p>
+                  </div>
+                </div>
                 <button onClick={() => signOut({ callbackUrl: '/' })}
-                  className="hidden sm:inline text-slate-500 hover:text-slate-900 font-headline text-sm font-bold transition-colors">
+                  className="hidden sm:inline text-slate-400 hover:text-slate-900 font-headline text-xs font-bold transition-colors border border-slate-200 px-3 py-1.5 rounded-lg hover:border-slate-400">
                   Sign Out
                 </button>
               </>
@@ -95,9 +108,14 @@ export function Navbar() {
             {status === 'authenticated' && (
               <>
                 <div className="border-t border-outline-variant/20 my-2" />
-                <div className="px-4 py-2 flex items-center gap-2">
-                  <span className="text-sm font-bold text-on-surface">{user?.name}</span>
-                  <span className="bg-secondary-fixed text-on-secondary-fixed px-2 py-0.5 rounded-full text-[9px] font-bold uppercase">{role}</span>
+                <div className="px-4 py-2 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center text-white text-sm font-black shrink-0">
+                    {(user?.name || user?.email || '?').charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-on-surface leading-none">{user?.name || user?.email}</p>
+                    <p className="text-[10px] text-on-surface-variant uppercase tracking-wider font-bold">{role?.replace('_', ' ')}</p>
+                  </div>
                 </div>
                 <button onClick={() => { signOut({ callbackUrl: '/' }); setMobileOpen(false); }}
                   className="block w-full text-left px-4 py-3 rounded-lg text-sm font-bold text-error hover:bg-error-container/30 transition-colors">

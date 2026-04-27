@@ -121,21 +121,20 @@ export default function DashboardPage() {
         </section>
 
         {/* Stats */}
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { icon: 'inventory_2', label: isSeller ? 'My Listings' : 'Watched Listings', value: listings.length.toString(), tag: 'ACTIVE', tagColor: 'bg-tertiary-fixed text-on-tertiary-fixed' },
-            { icon: 'verified', label: 'Verified', value: listings.filter(l => l.badge !== 'NONE').length.toString(), tag: 'TRUSTED', tagColor: 'bg-secondary-fixed text-on-secondary-fixed' },
-            { icon: 'calendar_today', label: 'Inspections', value: inspections.length.toString(), tag: 'BOOKED', tagColor: 'bg-primary-fixed text-on-primary-fixed' },
-            { icon: 'payments', label: 'Escrows', value: escrows.length.toString(), tag: 'SECURE', tagColor: 'bg-surface-container-high text-on-surface-variant' },
+            { icon: 'inventory_2', label: isSeller ? 'My Listings' : 'Listings', value: listings.length.toString(), iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },
+            { icon: 'verified',    label: 'Verified',     value: listings.filter(l => l.badge !== 'NONE').length.toString(), iconBg: 'bg-amber-100', iconColor: 'text-amber-600' },
+            { icon: 'calendar_today', label: 'Inspections', value: inspections.length.toString(), iconBg: 'bg-emerald-100', iconColor: 'text-emerald-600' },
+            { icon: 'payments',   label: 'Escrows',      value: escrows.length.toString(), iconBg: 'bg-purple-100', iconColor: 'text-purple-600' },
           ].map(s => (
-            <div key={s.label} className="bg-surface-container-lowest p-6 rounded-xl flex flex-col gap-3 border-b-2 border-transparent hover:border-primary transition-all group">
-              <div className="flex justify-between items-start">
-                <span className="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">{s.icon}</span>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${s.tagColor}`}>{s.tag}</span>
+            <div key={s.label} className="bg-surface-container-lowest p-5 rounded-2xl flex flex-col gap-4 hover:shadow-md transition-all group border border-outline-variant/10">
+              <div className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center`}>
+                <span className={`material-symbols-outlined ${s.iconColor}`} style={{ fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
               </div>
               <div>
-                <p className="text-3xl font-black font-headline">{s.value}</p>
-                <p className="text-xs text-on-surface-variant font-medium">{s.label}</p>
+                <p className="text-3xl font-black font-headline text-on-surface">{s.value}</p>
+                <p className="text-xs text-on-surface-variant font-medium mt-0.5">{s.label}</p>
               </div>
             </div>
           ))}
