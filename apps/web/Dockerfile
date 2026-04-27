@@ -23,6 +23,15 @@ RUN mkdir -p public
 
 RUN npm run build
 
+# Pre-compile seed script to plain JS so runner needs no TypeScript tooling
+# Run seed with: docker exec <container> node /app/prisma/seed.js
+RUN node_modules/.bin/esbuild prisma/seed.ts \
+  --bundle \
+  --platform=node \
+  --outfile=prisma/seed.js \
+  --external:@prisma/client \
+  --external:bcryptjs
+
 # Production image
 FROM base AS runner
 WORKDIR /app
@@ -39,11 +48,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-# Seed runtime: tsx + its deps (needed for npx tsx prisma/seed.ts)
-COPY --from=builder /app/node_modules/tsx ./node_modules/tsx
-COPY --from=builder /app/node_modules/esbuild ./node_modules/esbuild
+# bcryptjs needed by compiled seed.js at runtime
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
-COPY --from=builder /app/node_modules/.bin/tsx ./node_modules/.bin/tsx
 
 USER nextjs
 
