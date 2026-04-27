@@ -5,14 +5,27 @@ import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 
+const ROLE_OPTIONS = [
+  { value: 'BUYER',    label: 'Buyer / Renter',      icon: 'person_search',    desc: 'Search and acquire verified properties' },
+  { value: 'SELLER',   label: 'Seller / Owner',      icon: 'storefront',       desc: 'List and manage your real estate assets' },
+  { value: 'MANDATE',  label: 'Mandate / Agent',     icon: 'badge',            desc: 'Represent sellers and manage portfolios' },
+];
+
+const PLATFORM_POINTS = [
+  { icon: 'shield_check',     text: 'Institutional-grade document vaulting' },
+  { icon: 'home_search',      text: 'Physical on-site inspection reports' },
+  { icon: 'account_balance',  text: 'Escrow-backed secure transactions' },
+  { icon: 'verified',         text: 'C of O & R of O badge verification' },
+];
+
 export default function SignUpPage() {
   const router = useRouter();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [name, setName]         = useState('');
+  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('BUYER');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [role, setRole]         = useState('BUYER');
+  const [error, setError]       = useState('');
+  const [loading, setLoading]   = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,57 +42,144 @@ export default function SignUpPage() {
       const result = await signIn('credentials', { email, password, redirect: false });
       if (result?.error) router.push('/auth/signin');
       else { router.push('/dashboard'); router.refresh(); }
-    } catch { setError('Something went wrong'); }
+    } catch { setError('Something went wrong. Please try again.'); }
     finally { setLoading(false); }
   }
 
+  const selectedRole = ROLE_OPTIONS.find(r => r.value === role);
+
   return (
-    <main className="min-h-screen bg-surface flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-10">
-          <Link href="/" className="text-3xl font-black text-primary tracking-tighter font-headline">TrustedPlot</Link>
-          <p className="text-on-surface-variant mt-3 font-medium">Join the Digital Architect Ledger</p>
+    <main className="min-h-screen flex">
+      {/* ── Left: Brand Panel ─────────────────────────── */}
+      <div className="hidden lg:flex lg:w-[45%] xl:w-[42%] trust-gradient flex-col justify-between p-12 relative overflow-hidden shrink-0">
+        {/* Decorative circles */}
+        <div className="absolute top-[-80px] right-[-80px] w-72 h-72 rounded-full bg-white/[0.03] pointer-events-none" />
+        <div className="absolute bottom-[-100px] left-[-60px] w-96 h-96 rounded-full bg-white/[0.03] pointer-events-none" />
+
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-3 animate-fade-in">
+          <svg width="36" height="36" viewBox="0 0 30 30" fill="none" className="shrink-0">
+            <path d="M15 2L3 8v9c0 6.6 4.8 12.8 12 14.9C22.2 29.8 27 23.6 27 17V8L15 2z"
+              fill="white" fillOpacity="0.15" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
+            <path d="M10 15.5l3.5 3.5L21 11.5"
+              stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span className="text-white font-headline font-black tracking-tighter text-2xl">TrustedPlot</span>
+        </Link>
+
+        {/* Hero copy */}
+        <div className="space-y-8 animate-fade-in-up stagger-1">
+          <div>
+            <p className="text-white/40 text-xs font-bold uppercase tracking-widest mb-4">Join the platform</p>
+            <h2 className="text-white text-4xl font-headline font-black tracking-tight leading-[1.15] mb-4">
+              Your trust-first<br/>property journey<br/>starts here.
+            </h2>
+            <p className="text-white/60 text-sm leading-relaxed max-w-xs">
+              Build on a platform where every listing is verified, every inspection is documented, and every naira is protected.
+            </p>
+          </div>
+
+          <ul className="space-y-4">
+            {PLATFORM_POINTS.map(p => (
+              <li key={p.icon} className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                  <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>{p.icon}</span>
+                </div>
+                <span className="text-white/75 text-sm font-medium">{p.text}</span>
+              </li>
+            ))}
+          </ul>
         </div>
-        <div className="bg-surface-container-lowest rounded-xl p-10 shadow-sm border border-outline-variant/10">
+
+        <p className="text-white/25 text-xs animate-fade-in stagger-2">
+          © 2024 TrustedPlot · Institutional-grade property intelligence
+        </p>
+      </div>
+
+      {/* ── Right: Form Panel ─────────────────────────── */}
+      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-surface overflow-y-auto">
+        <div className="w-full max-w-md animate-fade-in-up">
+
+          {/* Mobile logo */}
+          <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-10">
+            <svg width="28" height="28" viewBox="0 0 30 30" fill="none">
+              <path d="M15 2L3 8v9c0 6.6 4.8 12.8 12 14.9C22.2 29.8 27 23.6 27 17V8L15 2z"
+                fill="#0F172A" fillOpacity="0.12" stroke="#0F172A" strokeWidth="1.5" strokeLinejoin="round"/>
+              <path d="M10 15.5l3.5 3.5L21 11.5"
+                stroke="#0F172A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span className="font-headline font-black tracking-tighter text-xl text-on-surface">TrustedPlot</span>
+          </Link>
+
+          <div className="mb-8">
+            <h1 className="text-3xl font-headline font-extrabold tracking-tight text-on-surface mb-1">Create your account</h1>
+            <p className="text-on-surface-variant text-sm">Join the Digital Architect Ledger.</p>
+          </div>
+
           {error && (
-            <div className="mb-6 p-4 bg-error-container rounded-lg border-l-4 border-error">
+            <div className="mb-6 p-4 bg-error-container rounded-xl border-l-4 border-error flex items-center gap-3 animate-scale-in">
+              <span className="material-symbols-outlined text-on-error-container text-sm shrink-0">error</span>
               <p className="text-sm text-on-error-container font-medium">{error}</p>
             </div>
           )}
-          <form onSubmit={handleSubmit} className="space-y-6">
+
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-2">Full Name</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} required
-                className="w-full px-4 py-4 bg-surface-container-low border-b-2 border-outline-variant focus:border-primary focus:ring-0 transition-all font-headline font-bold text-lg rounded-none"
-                placeholder="Your full name" />
+              <input type="text" value={name} onChange={e => setName(e.target.value)} required
+                className="auth-input" placeholder="Your full name" autoComplete="name" />
             </div>
+
             <div>
               <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-2">Email Address</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
-                className="w-full px-4 py-4 bg-surface-container-low border-b-2 border-outline-variant focus:border-primary focus:ring-0 transition-all font-headline font-bold text-lg rounded-none"
-                placeholder="you@example.com" />
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
+                className="auth-input" placeholder="you@example.com" autoComplete="email" />
             </div>
+
             <div>
               <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-2">Password</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8}
-                className="w-full px-4 py-4 bg-surface-container-low border-b-2 border-outline-variant focus:border-primary focus:ring-0 transition-all font-headline font-bold text-lg rounded-none"
-                placeholder="Min 8 characters" />
+              <input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={8}
+                className="auth-input" placeholder="Minimum 8 characters" autoComplete="new-password" />
             </div>
+
+            {/* Role selector — visual cards */}
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-2">Account Type</label>
-              <select value={role} onChange={(e) => setRole(e.target.value)}
-                className="w-full px-4 py-4 bg-surface-container-low border-b-2 border-outline-variant focus:border-primary focus:ring-0 transition-all font-headline font-bold text-lg rounded-none">
-                <option value="BUYER">Buyer / Renter</option>
-                <option value="SELLER">Seller / Owner</option>
-                <option value="MANDATE">Mandate / Agent</option>
-              </select>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-3">Account Type</label>
+              <div className="grid grid-cols-3 gap-2">
+                {ROLE_OPTIONS.map(r => (
+                  <button key={r.value} type="button" onClick={() => setRole(r.value)}
+                    className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 text-center transition-all ${
+                      role === r.value
+                        ? 'border-primary bg-primary/5 text-primary'
+                        : 'border-outline-variant/20 bg-surface-container-low text-on-surface-variant hover:border-outline-variant'
+                    }`}>
+                    <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>{r.icon}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wide leading-tight">{r.label.split(' / ')[0]}</span>
+                  </button>
+                ))}
+              </div>
+              {selectedRole && (
+                <p className="text-xs text-on-surface-variant mt-2 text-center">{selectedRole.desc}</p>
+              )}
             </div>
+
             <button type="submit" disabled={loading}
-              className="w-full machined-gradient text-white py-4 rounded-lg font-bold uppercase tracking-widest text-sm hover:opacity-95 transition-all disabled:opacity-50 shadow-lg">
-              {loading ? 'Creating Vault...' : 'Create Account'}
+              className="w-full machined-gradient text-white py-4 rounded-xl font-bold uppercase tracking-widest text-sm hover:opacity-95 active:scale-[0.99] transition-all disabled:opacity-50 shadow-lg flex items-center justify-center gap-2 mt-2">
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Creating Account…
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>person_add</span>
+                  Create Account
+                </>
+              )}
             </button>
           </form>
-          <p className="text-center text-sm text-on-surface-variant mt-8">
+
+          <p className="text-center text-sm text-on-surface-variant mt-6">
             Already a member?{' '}
             <Link href="/auth/signin" className="text-primary font-bold hover:underline">Sign In</Link>
           </p>

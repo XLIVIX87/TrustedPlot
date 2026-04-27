@@ -108,28 +108,27 @@ export default function AdminDashboardPage() {
 
         {/* Bento stat grid */}
         {loading ? (
-          <section className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-12 animate-pulse">
+          <section className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10 animate-pulse">
             {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="bg-surface-container-lowest rounded-xl h-32" />
+              <div key={i} className="bg-surface-container-lowest rounded-2xl h-32" />
             ))}
           </section>
         ) : metrics && (
-          <section className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-12">
+          <section className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
             {[
-              { icon: 'group', label: 'Total Users', value: metrics.totalUsers, tag: 'USERS', tagColor: 'bg-surface-container-high text-on-surface-variant' },
-              { icon: 'inventory_2', label: 'Total Listings', value: metrics.totalListings, tag: 'ACTIVE', tagColor: 'bg-tertiary-fixed text-on-tertiary-fixed' },
-              { icon: 'pending_actions', label: 'Pending Verifications', value: metrics.pendingVerifications, tag: 'QUEUE', tagColor: 'bg-secondary-fixed text-on-secondary-fixed' },
-              { icon: 'account_balance_wallet', label: 'Active Escrows', value: metrics.activeEscrows, tag: 'ESCROW', tagColor: 'bg-primary text-on-primary' },
-              { icon: 'gavel', label: 'Open Disputes', value: metrics.openDisputes, tag: 'ALERT', tagColor: 'bg-error text-on-error' },
+              { icon: 'group',                  label: 'Total Users',          value: metrics.totalUsers,            iconBg: 'bg-blue-100',    iconColor: 'text-blue-600'   },
+              { icon: 'inventory_2',            label: 'Total Listings',       value: metrics.totalListings,         iconBg: 'bg-teal-100',    iconColor: 'text-teal-600'   },
+              { icon: 'pending_actions',        label: 'Pending Verifications',value: metrics.pendingVerifications,  iconBg: 'bg-amber-100',   iconColor: 'text-amber-600'  },
+              { icon: 'account_balance_wallet', label: 'Active Escrows',       value: metrics.activeEscrows,         iconBg: 'bg-violet-100',  iconColor: 'text-violet-600' },
+              { icon: 'gavel',                  label: 'Open Disputes',        value: metrics.openDisputes,          iconBg: metrics.openDisputes > 0 ? 'bg-red-100' : 'bg-slate-100', iconColor: metrics.openDisputes > 0 ? 'text-red-600' : 'text-slate-400' },
             ].map(m => (
-              <div key={m.label} className="bg-surface-container-lowest p-6 rounded-xl flex flex-col gap-3 border-b-2 border-transparent hover:border-primary transition-all group">
-                <div className="flex justify-between items-start">
-                  <span className="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">{m.icon}</span>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest ${m.tagColor}`}>{m.tag}</span>
+              <div key={m.label} className="bg-surface-container-lowest p-5 rounded-2xl flex flex-col gap-4 hover:shadow-md transition-all border border-outline-variant/10 animate-fade-in-up">
+                <div className={`w-10 h-10 rounded-xl ${m.iconBg} flex items-center justify-center`}>
+                  <span className={`material-symbols-outlined ${m.iconColor}`} style={{ fontVariationSettings: "'FILL' 1" }}>{m.icon}</span>
                 </div>
                 <div>
-                  <p className="text-3xl font-black font-headline">{m.value}</p>
-                  <p className="text-xs text-on-surface-variant font-medium">{m.label}</p>
+                  <p className="text-3xl font-black font-headline text-on-surface">{m.value}</p>
+                  <p className="text-xs text-on-surface-variant font-medium mt-0.5">{m.label}</p>
                 </div>
               </div>
             ))}
@@ -138,39 +137,59 @@ export default function AdminDashboardPage() {
 
         {/* Recent activity */}
         <section>
-          <div className="flex justify-between items-end mb-6">
-            <h3 className="text-2xl font-bold font-headline tracking-tight">Recent Activity</h3>
-            <Link href="/admin/audit" className="text-sm font-bold text-primary border-b border-primary/20 pb-0.5 hover:border-primary transition-all">View all</Link>
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="text-xl font-bold font-headline tracking-tight">Recent Activity</h3>
+              <p className="text-xs text-on-surface-variant mt-0.5">Last 10 platform events</p>
+            </div>
+            <Link href="/admin/audit"
+              className="text-sm font-bold text-primary flex items-center gap-1 hover:underline">
+              View all <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            </Link>
           </div>
 
           <div className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 overflow-hidden">
             {activity.length === 0 ? (
               <div className="p-12 text-center">
-                <span className="material-symbols-outlined text-4xl text-on-surface-variant/40 mb-3">inbox</span>
-                <p className="text-sm text-on-surface-variant">No recent activity.</p>
+                <div className="w-12 h-12 bg-surface-container-high rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <span className="material-symbols-outlined text-2xl text-on-surface-variant/40">inbox</span>
+                </div>
+                <p className="text-sm text-on-surface-variant font-medium">No recent activity.</p>
               </div>
             ) : (
-              <div className="divide-y divide-outline-variant/20">
-                {activity.slice(0, 10).map(log => (
-                  <div key={log.id} className={`px-6 py-4 flex items-center justify-between border-l-4 ${actionBorderColor(log.actionType)} hover:bg-surface-container-low/40 transition-colors`}>
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-on-surface-variant text-xl">
-                        {log.actionType.includes('VERIFICATION') ? 'verified_user' :
-                         log.actionType.includes('ESCROW') ? 'account_balance_wallet' :
-                         log.actionType.includes('DISPUTE') ? 'gavel' :
-                         log.actionType.includes('LISTING') ? 'inventory_2' :
-                         log.actionType.includes('USER') ? 'person_add' :
-                         'history'}
-                      </span>
-                      <div>
-                        <span className="text-sm font-bold text-on-surface">{log.actor?.name || 'System'}</span>
-                        <span className="text-sm text-on-surface-variant ml-2">{log.actionType.replace(/_/g, ' ').toLowerCase()}</span>
-                        <span className="text-xs text-on-surface-variant/50 ml-2 font-mono">{log.entityType} #{log.entityId.slice(0, 8)}</span>
+              <div className="divide-y divide-outline-variant/10">
+                {activity.slice(0, 10).map((log, i) => {
+                  const isVerification = log.actionType.includes('VERIFICATION');
+                  const isEscrow       = log.actionType.includes('ESCROW');
+                  const isDispute      = log.actionType.includes('DISPUTE');
+                  const isListing      = log.actionType.includes('LISTING');
+                  const isUser         = log.actionType.includes('USER');
+
+                  const iconMap = {
+                    icon:  isVerification ? 'verified_user' : isEscrow ? 'account_balance_wallet' : isDispute ? 'gavel' : isListing ? 'inventory_2' : isUser ? 'person_add' : 'history',
+                    bg:    isVerification ? 'bg-teal-100'   : isEscrow ? 'bg-violet-100'          : isDispute ? 'bg-red-100'  : isListing ? 'bg-blue-100'   : isUser ? 'bg-emerald-100' : 'bg-slate-100',
+                    color: isVerification ? 'text-teal-600' : isEscrow ? 'text-violet-600'        : isDispute ? 'text-red-600': isListing ? 'text-blue-600' : isUser ? 'text-emerald-600' : 'text-slate-500',
+                  };
+
+                  return (
+                    <div key={log.id}
+                      className="px-6 py-4 flex items-center gap-4 hover:bg-surface-container-low/50 transition-colors">
+                      <div className={`w-8 h-8 rounded-lg ${iconMap.bg} flex items-center justify-center shrink-0`}>
+                        <span className={`material-symbols-outlined text-sm ${iconMap.color}`} style={{ fontVariationSettings: "'FILL' 1" }}>
+                          {iconMap.icon}
+                        </span>
                       </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-sm font-bold text-on-surface">{log.actor?.name || 'System'}</span>
+                          <span className="text-sm text-on-surface-variant">{log.actionType.replace(/_/g, ' ').toLowerCase()}</span>
+                        </div>
+                        <span className="text-[11px] text-on-surface-variant/50 font-mono">{log.entityType} · {log.entityId.slice(0, 10)}…</span>
+                      </div>
+                      <span className="text-xs text-on-surface-variant/60 shrink-0 tabular-nums">{formatDate(log.createdAt)}</span>
                     </div>
-                    <span className="text-xs text-on-surface-variant/60 shrink-0 ml-4">{formatDate(log.createdAt)}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

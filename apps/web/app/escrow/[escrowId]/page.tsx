@@ -13,49 +13,122 @@ interface EscrowDetail {
   createdAt: string;
   updatedAt: string;
   listing: { id: string; title: string; city: string; district: string; price: string };
-  buyer: { name: string; email: string };
-  seller: { name: string; email: string };
-  events: { id: string; eventType: string; createdAt: string; createdByUserId: string; payload: any }[];
+  buyer:   { name: string; email: string };
+  seller:  { name: string; email: string };
+  events:  { id: string; eventType: string; createdAt: string; createdByUserId: string; payload: any }[];
   disputes?: { id: string; reason: string; status: string; resolutionSummary: string | null }[];
 }
 
-const ESCROW_STAGES = ['CREATED', 'FUNDING_PENDING', 'FUNDED', 'PENDING_RESOLUTION', 'RELEASED', 'DISPUTED', 'REFUNDED'];
-
-const STAGE_META: Record<string, { icon: string; label: string }> = {
-  CREATED: { icon: 'add_circle', label: 'Escrow Created' },
-  FUNDING_PENDING: { icon: 'hourglass_empty', label: 'Awaiting Funding' },
-  FUNDED: { icon: 'account_balance_wallet', label: 'Funds Secured' },
-  PENDING_RESOLUTION: { icon: 'description', label: 'Pending Resolution' },
-  RELEASED: { icon: 'payments', label: 'Funds Released' },
-  DISPUTED: { icon: 'gavel', label: 'Under Dispute' },
-  REFUNDED: { icon: 'undo', label: 'Refunded' },
+const STAGE_META: Record<string, { icon: string; label: string; desc: string }> = {
+  CREATED:            { icon: 'add_circle',            label: 'Escrow Created',       desc: 'Terms agreed, escrow opened' },
+  FUNDING_PENDING:    { icon: 'hourglass_empty',        label: 'Awaiting Funding',     desc: 'Buyer to transfer funds' },
+  FUNDED:             { icon: 'account_balance_wallet', label: 'Funds Secured',        desc: 'Funds held in secure escrow' },
+  PENDING_RESOLUTION: { icon: 'description',            label: 'Pending Resolution',   desc: 'Awaiting final sign-off' },
+  RELEASED:           { icon: 'payments',               label: 'Funds Released',       desc: 'Transaction complete' },
+  DISPUTED:           { icon: 'gavel',                  label: 'Under Dispute',        desc: 'Dispute raised, review in progress' },
+  REFUNDED:           { icon: 'undo',                   label: 'Refunded',             desc: 'Funds returned to buyer' },
 };
+
+const STATUS_PILL: Record<string, string> = {
+  FUNDED:             'bg-emerald-100 text-emerald-800 border border-emerald-200',
+  RELEASED:           'bg-teal-100 text-teal-800 border border-teal-200',
+  DISPUTED:           'bg-red-100 text-red-700 border border-red-200',
+  REFUNDED:           'bg-slate-100 text-slate-600 border border-slate-200',
+  FUNDING_PENDING:    'bg-amber-100 text-amber-800 border border-amber-200',
+  CREATED:            'bg-blue-100 text-blue-800 border border-blue-200',
+  PENDING_RESOLUTION: 'bg-violet-100 text-violet-800 border border-violet-200',
+};
+
+function StageTimeline({ stages, escrowStatus, events }: {
+  stages: string[];
+  escrowStatus: string;
+  events: EscrowDetail['events'];
+}) {
+  const currentIdx = stages.indexOf(escrowStatus);
+
+  function dotStyle(i: number) {
+    if (i < currentIdx)  return 'bg-emerald-500 text-white ring-4 ring-emerald-100';
+    if (i === currentIdx) {
+      if (escrowStatus === 'DISPUTED') return 'bg-red-500 text-white ring-4 ring-red-100';
+      if (escrowStatus === 'REFUNDED') return 'bg-slate-500 text-white ring-4 ring-slate-100';
+      return 'bg-primary text-white ring-4 ring-primary/20';
+    }
+    return 'bg-surface-container-high text-on-surface-variant/40';
+  }
+
+  function lineStyle(i: number) {
+    return i < currentIdx ? 'bg-emerald-400' : 'bg-surface-container-high';
+  }
+
+  return (
+    <div className="relative ml-5">
+      {stages.map((stage, i) => {
+        const meta  = STAGE_META[stage];
+        const event = events.find(e => e.eventType === stage || e.eventType === `ESCROW_${stage}`);
+        const isLast = i === stages.length - 1;
+        const status = i < currentIdx ? 'completed' : i === currentIdx ? 'current' : 'upcoming';
+
+        return (
+          <div key={stage} className="relative flex items-start gap-5 pb-8 last:pb-0">
+            {/* Connector line */}
+            {!isLast && (
+              <div className={`absolute left-5 top-10 w-0.5 bottom-0 -ml-px ${lineStyle(i)}`} />
+            )}
+
+            {/* Dot */}
+            <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${dotStyle(i)}`}>
+              <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: status === 'completed' ? "'FILL' 1" : "'FILL' 0" }}>
+                {status === 'completed' ? 'check_circle' : meta?.icon || 'circle'}
+              </span>
+            </div>
+
+            {/* Label */}
+            <div className="pt-1.5 flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className={`font-bold font-headline text-base leading-tight ${status === 'upcoming' ? 'text-on-surface-variant/40' : 'text-on-surface'}`}>
+                  {meta?.label || stage}
+                </p>
+                {status === 'current' && (
+                  <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary text-white">Current</span>
+                )}
+              </div>
+              <p className={`text-xs mt-0.5 ${status === 'upcoming' ? 'text-on-surface-variant/30' : 'text-on-surface-variant'}`}>
+                {event
+                  ? new Date(event.createdAt).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                  : meta?.desc}
+              </p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function EscrowTimelinePage({ params }: { params: { escrowId: string } }) {
   const { data: session } = useSession();
-  const [escrow, setEscrow] = useState<EscrowDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [actionLoading, setActionLoading] = useState('');
-  const [actionMessage, setActionMessage] = useState('');
-  const [disputeReason, setDisputeReason] = useState('');
+  const [escrow, setEscrow]                 = useState<EscrowDetail | null>(null);
+  const [loading, setLoading]               = useState(true);
+  const [error, setError]                   = useState('');
+  const [actionLoading, setActionLoading]   = useState('');
+  const [actionMessage, setActionMessage]   = useState('');
+  const [disputeReason, setDisputeReason]   = useState('');
   const [showDisputeForm, setShowDisputeForm] = useState(false);
 
-  useEffect(() => {
-    async function fetchEscrow() {
-      try {
-        const res = await fetch(`/api/escrows/${params.escrowId}`);
-        const data = await res.json();
-        if (data.data) setEscrow(data.data);
-        else setError(data.error?.message || 'Escrow not found');
-      } catch { setError('Failed to load escrow'); }
-      finally { setLoading(false); }
-    }
-    fetchEscrow();
-  }, [params.escrowId]);
+  async function loadEscrow() {
+    try {
+      const res  = await fetch(`/api/escrows/${params.escrowId}`);
+      const data = await res.json();
+      if (data.data) setEscrow(data.data);
+      else setError(data.error?.message || 'Escrow not found');
+    } catch { setError('Failed to load escrow'); }
+    finally { setLoading(false); }
+  }
 
-  const formatPrice = (p: string) => new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(p));
-  const formatDate = (d: string) => new Date(d).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  useEffect(() => { loadEscrow(); }, [params.escrowId]);
+
+  const fmt  = (p: string) => new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(p));
+  const fmtD = (d: string) => new Date(d).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
   async function handleFund() {
     setActionLoading('fund');
@@ -67,15 +140,8 @@ export default function EscrowTimelinePage({ params }: { params: { escrowId: str
         body: JSON.stringify({ idempotencyKey: `fund-${params.escrowId}-${Date.now()}` }),
       });
       const data = await res.json();
-      if (res.ok) {
-        setActionMessage('Escrow funded successfully!');
-        // Refresh
-        const res2 = await fetch(`/api/escrows/${params.escrowId}`);
-        const data2 = await res2.json();
-        if (data2.data) setEscrow(data2.data);
-      } else {
-        setActionMessage(data.error?.message || 'Funding failed');
-      }
+      setActionMessage(res.ok ? 'Escrow funded successfully!' : (data.error?.message || 'Funding failed'));
+      if (res.ok) await loadEscrow();
     } catch { setActionMessage('Something went wrong'); }
     finally { setActionLoading(''); }
   }
@@ -91,42 +157,12 @@ export default function EscrowTimelinePage({ params }: { params: { escrowId: str
         body: JSON.stringify({ reason: disputeReason }),
       });
       const data = await res.json();
-      if (res.ok) {
-        setActionMessage('Dispute opened successfully');
-        setShowDisputeForm(false);
-        setDisputeReason('');
-        const res2 = await fetch(`/api/escrows/${params.escrowId}`);
-        const data2 = await res2.json();
-        if (data2.data) setEscrow(data2.data);
-      } else {
-        setActionMessage(data.error?.message || 'Failed to open dispute');
-      }
+      setActionMessage(res.ok ? 'Dispute opened successfully' : (data.error?.message || 'Failed to open dispute'));
+      if (res.ok) { setShowDisputeForm(false); setDisputeReason(''); await loadEscrow(); }
     } catch { setActionMessage('Something went wrong'); }
     finally { setActionLoading(''); }
   }
 
-  function getStageStatus(stage: string) {
-    if (!escrow) return 'upcoming';
-    const currentIdx = ESCROW_STAGES.indexOf(escrow.status);
-    const stageIdx = ESCROW_STAGES.indexOf(stage);
-    if (escrow.status === 'DISPUTED' && stage === 'DISPUTED') return 'current';
-    if (escrow.status === 'REFUNDED' && stage === 'REFUNDED') return 'current';
-    if (stageIdx < currentIdx) return 'completed';
-    if (stageIdx === currentIdx) return 'current';
-    return 'upcoming';
-  }
-
-  function dotColor(status: string) {
-    if (status === 'completed') return 'bg-tertiary-fixed text-on-tertiary-fixed';
-    if (status === 'current') return 'bg-secondary-fixed text-on-secondary-fixed';
-    return 'bg-surface-container-high text-on-surface-variant';
-  }
-
-  function lineColor(status: string) {
-    return status === 'completed' ? 'bg-tertiary-fixed' : 'bg-surface-container-high';
-  }
-
-  // Only show relevant stages
   const visibleStages = escrow?.status === 'DISPUTED'
     ? ['CREATED', 'FUNDED', 'DISPUTED']
     : escrow?.status === 'REFUNDED'
@@ -136,12 +172,13 @@ export default function EscrowTimelinePage({ params }: { params: { escrowId: str
   if (loading) return (
     <main className="min-h-screen bg-surface">
       <Navbar />
-      <div className="pt-32 pb-20 px-8 max-w-[1000px] mx-auto animate-pulse">
-        <div className="h-8 bg-surface-container-high rounded w-1/3 mb-8" />
-        <div className="bg-surface-container-lowest rounded-2xl h-80 mb-8" />
+      <div className="pt-32 pb-20 px-8 max-w-[1000px] mx-auto animate-pulse space-y-6">
+        <div className="h-5 bg-surface-container-low rounded w-24" />
+        <div className="h-10 bg-surface-container-low rounded w-1/3" />
+        <div className="bg-surface-container-lowest rounded-2xl h-80" />
         <div className="grid grid-cols-2 gap-6">
-          <div className="bg-surface-container-lowest rounded-2xl h-48" />
-          <div className="bg-surface-container-lowest rounded-2xl h-48" />
+          <div className="bg-surface-container-lowest rounded-2xl h-52" />
+          <div className="bg-surface-container-lowest rounded-2xl h-52" />
         </div>
       </div>
     </main>
@@ -151,190 +188,203 @@ export default function EscrowTimelinePage({ params }: { params: { escrowId: str
     <main className="min-h-screen bg-surface">
       <Navbar />
       <div className="pt-32 px-8 max-w-[1000px] mx-auto text-center py-20">
-        <span className="material-symbols-outlined text-5xl text-outline-variant mb-4 block">error</span>
-        <p className="font-headline font-bold text-xl">{error || 'Escrow not found'}</p>
-        <Link href="/dashboard" className="text-primary font-bold text-sm hover:underline mt-4 inline-block">Back to Dashboard</Link>
+        <div className="w-16 h-16 bg-error-container/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <span className="material-symbols-outlined text-3xl text-error">error</span>
+        </div>
+        <p className="font-headline font-bold text-xl mb-2">{error || 'Escrow not found'}</p>
+        <Link href="/dashboard" className="text-primary font-bold text-sm hover:underline mt-2 inline-block">← Back to Dashboard</Link>
       </div>
     </main>
   );
+
+  const statusPill = STATUS_PILL[escrow.status] || 'bg-surface-container-high text-on-surface-variant';
 
   return (
     <main className="min-h-screen bg-surface">
       <Navbar />
       <div className="pt-32 pb-20 px-6 md:px-8 max-w-[1000px] mx-auto">
-        <Link href="/dashboard" className="text-sm font-bold text-primary border-b border-primary/20 pb-0.5 hover:border-primary transition-all inline-flex items-center gap-1 mb-8">
+
+        {/* Breadcrumb */}
+        <Link href="/dashboard" className="text-sm font-bold text-on-surface-variant flex items-center gap-1 mb-8 hover:text-primary transition-colors w-fit">
           <span className="material-symbols-outlined text-sm">arrow_back</span>
-          Back to Dashboard
+          Dashboard
         </Link>
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
-          <h1 className="text-4xl font-extrabold font-headline tracking-tighter text-on-surface">Escrow Timeline</h1>
-          <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${
-            escrow.status === 'FUNDED' ? 'bg-tertiary-fixed/20 text-on-tertiary-fixed' :
-            escrow.status === 'DISPUTED' ? 'bg-error-container text-on-error-container' :
-            'bg-secondary-fixed/20 text-on-secondary-fixed'
-          }`}>{escrow.status.replace('_', ' ')}</span>
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 animate-fade-in-up">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Secure Transaction</p>
+            <h1 className="text-4xl font-extrabold font-headline tracking-tighter text-on-surface">Escrow Timeline</h1>
+          </div>
+          <span className={`text-xs font-black px-4 py-2 rounded-full uppercase tracking-widest ${statusPill}`}>
+            {escrow.status.replace(/_/g, ' ')}
+          </span>
         </div>
 
+        {/* Action message */}
         {actionMessage && (
-          <div className={`mb-6 p-4 rounded-xl border-l-4 ${actionMessage.includes('successfully') || actionMessage.includes('Success') ? 'bg-tertiary-fixed/10 border-tertiary-fixed' : 'bg-error-container border-error'}`}>
+          <div className={`mb-6 p-4 rounded-xl border-l-4 flex items-center gap-3 animate-scale-in ${
+            actionMessage.toLowerCase().includes('success')
+              ? 'bg-emerald-50 border-emerald-500 text-emerald-800'
+              : 'bg-error-container border-error text-on-error-container'
+          }`}>
+            <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
+              {actionMessage.toLowerCase().includes('success') ? 'check_circle' : 'error'}
+            </span>
             <p className="text-sm font-medium">{actionMessage}</p>
+            <button onClick={() => setActionMessage('')} className="ml-auto opacity-60 hover:opacity-100">
+              <span className="material-symbols-outlined text-sm">close</span>
+            </button>
           </div>
         )}
 
-        {/* Timeline */}
-        <div className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 p-8 md:p-10 mb-8">
-          <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-8">Transaction Progress</p>
-          <div className="relative ml-6">
-            {visibleStages.map((stage, i) => {
-              const status = getStageStatus(stage);
-              const meta = STAGE_META[stage];
-              const event = escrow.events.find(e => e.eventType === stage || e.eventType === `ESCROW_${stage}`);
-              return (
-                <div key={stage} className="relative flex items-start gap-5 pb-10 last:pb-0">
-                  {i < visibleStages.length - 1 && (
-                    <div className={`absolute left-5 top-10 w-0.5 h-full -ml-[1px] ${lineColor(status)}`} />
-                  )}
-                  <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${dotColor(status)}`}>
-                    <span className="material-symbols-outlined text-xl">{status === 'completed' ? 'check_circle' : meta?.icon || 'circle'}</span>
-                  </div>
-                  <div className="pt-1.5 flex-1">
-                    <p className={`font-bold font-headline text-lg leading-tight ${status === 'upcoming' ? 'text-on-surface-variant/60' : 'text-on-surface'}`}>
-                      {meta?.label || stage}
-                    </p>
-                    <p className="text-xs text-on-surface-variant/60 mt-0.5">
-                      {event ? formatDate(event.createdAt) : status === 'completed' ? 'Completed' : status === 'current' ? 'In progress' : 'Pending'}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        {/* Main grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 mb-6">
 
-        {/* Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 p-8">
-            <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-6">Escrow Details</p>
-            <dl className="space-y-4 text-sm">
-              <div className="flex justify-between items-center">
-                <dt className="text-on-surface-variant flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm text-outline">tag</span> Escrow ID
-                </dt>
-                <dd className="font-mono font-bold text-on-surface text-xs">{escrow.id.slice(0, 12)}...</dd>
-              </div>
-              <div className="flex justify-between items-center">
-                <dt className="text-on-surface-variant flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm text-outline">payments</span> Amount
-                </dt>
-                <dd className="font-bold font-headline text-on-surface">{formatPrice(escrow.amount)}</dd>
-              </div>
-              <div className="flex justify-between items-center">
-                <dt className="text-on-surface-variant flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm text-outline">calendar_today</span> Created
-                </dt>
-                <dd className="font-bold text-on-surface">{formatDate(escrow.createdAt)}</dd>
-              </div>
-              <div className="flex justify-between items-center">
-                <dt className="text-on-surface-variant flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm text-outline">person</span> Buyer
-                </dt>
-                <dd className="font-bold text-on-surface">{escrow.buyer.name}</dd>
-              </div>
-              <div className="flex justify-between items-center">
-                <dt className="text-on-surface-variant flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm text-outline">storefront</span> Seller
-                </dt>
-                <dd className="font-bold text-on-surface">{escrow.seller.name}</dd>
-              </div>
-            </dl>
+          {/* Timeline card */}
+          <div className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 p-8 animate-fade-in-up stagger-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-8">Transaction Progress</p>
+            <StageTimeline stages={visibleStages} escrowStatus={escrow.status} events={escrow.events} />
           </div>
 
-          <Link href={`/listings/${escrow.listing.id}`} className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 overflow-hidden flex flex-col hover:ring-primary/30 transition-all">
-            <div className="h-36 bg-surface-container-low flex items-center justify-center">
-              <span className="material-symbols-outlined text-5xl text-outline-variant">landscape</span>
+          {/* Right column */}
+          <div className="space-y-6">
+            {/* Escrow details */}
+            <div className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 p-6 animate-fade-in-up stagger-2">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-5">Escrow Details</p>
+              <dl className="space-y-3.5 text-sm">
+                {[
+                  { icon: 'tag',              label: 'ID',      value: escrow.id.slice(0, 14) + '…', mono: true },
+                  { icon: 'payments',         label: 'Amount',  value: fmt(escrow.amount),           headline: true },
+                  { icon: 'calendar_today',   label: 'Created', value: fmtD(escrow.createdAt) },
+                  { icon: 'person',           label: 'Buyer',   value: escrow.buyer.name },
+                  { icon: 'storefront',       label: 'Seller',  value: escrow.seller.name },
+                ].map(row => (
+                  <div key={row.label} className="flex items-center justify-between gap-2">
+                    <dt className="text-on-surface-variant flex items-center gap-1.5 shrink-0">
+                      <span className="material-symbols-outlined text-sm text-outline">{row.icon}</span>
+                      {row.label}
+                    </dt>
+                    <dd className={`text-right truncate max-w-[60%] ${row.mono ? 'font-mono text-xs' : row.headline ? 'font-black font-headline text-on-surface' : 'font-bold text-on-surface'}`}>
+                      {row.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
             </div>
-            <div className="p-6">
-              <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Property</p>
-              <p className="font-bold font-headline text-on-surface">{escrow.listing.title}</p>
-              <p className="text-sm text-on-surface-variant mt-1">{escrow.listing.city}, {escrow.listing.district}</p>
-              <p className="text-lg font-black font-headline text-primary mt-2">{formatPrice(escrow.listing.price)}</p>
-            </div>
-          </Link>
+
+            {/* Property card */}
+            <Link href={`/listings/${escrow.listing.id}`}
+              className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 overflow-hidden flex flex-col hover:ring-primary/30 hover:-translate-y-0.5 transition-all animate-fade-in-up stagger-3">
+              <div className="h-28 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center relative">
+                <span className="material-symbols-outlined text-5xl text-slate-400">landscape</span>
+                <span className="absolute top-2 right-2 text-[10px] font-bold bg-white/80 text-slate-600 px-2 py-0.5 rounded-full">Property</span>
+              </div>
+              <div className="p-5">
+                <p className="font-bold font-headline text-on-surface leading-tight">{escrow.listing.title}</p>
+                <p className="text-xs text-on-surface-variant mt-0.5 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">location_on</span>
+                  {escrow.listing.city}, {escrow.listing.district}
+                </p>
+                <p className="text-lg font-black font-headline text-primary mt-2">{fmt(escrow.listing.price)}</p>
+              </div>
+            </Link>
+          </div>
         </div>
 
         {/* Event log */}
         {escrow.events.length > 0 && (
-          <div className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 p-8 mb-8">
-            <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-6">Event Log</p>
-            <div className="space-y-3">
-              {escrow.events.map(event => (
-                <div key={event.id} className="flex items-center gap-4 py-2 border-b border-outline-variant/10 last:border-0">
-                  <span className="material-symbols-outlined text-sm text-primary">schedule</span>
-                  <div className="flex-1">
-                    <span className="text-sm font-bold">{event.eventType.replace(/_/g, ' ')}</span>
-                    <span className="text-xs text-on-surface-variant ml-3">{formatDate(event.createdAt)}</span>
+          <div className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 p-8 mb-6 animate-fade-in-up stagger-2">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-5">Event Log</p>
+            <div className="space-y-1">
+              {escrow.events.map((event, i) => (
+                <div key={event.id} className={`flex items-center gap-4 py-2.5 ${i < escrow.events.length - 1 ? 'border-b border-outline-variant/10' : ''}`}>
+                  <div className="w-7 h-7 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-primary text-xs">schedule</span>
                   </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-bold text-on-surface">{event.eventType.replace(/_/g, ' ')}</span>
+                  </div>
+                  <span className="text-xs text-on-surface-variant shrink-0">{fmtD(event.createdAt)}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Dispute info */}
+        {/* Dispute details */}
         {escrow.disputes && escrow.disputes.length > 0 && (
-          <div className="bg-error-container/30 rounded-2xl ring-1 ring-error/20 p-8 mb-8">
-            <p className="text-xs font-bold uppercase tracking-widest text-error mb-4">Active Dispute</p>
-            <p className="text-sm text-on-surface">{escrow.disputes[0].reason}</p>
-            <p className="text-xs text-on-surface-variant mt-2">Status: {escrow.disputes[0].status}</p>
+          <div className="bg-red-50 rounded-2xl border border-red-200 p-6 mb-6 animate-fade-in-up">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                <span className="material-symbols-outlined text-red-600 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>gavel</span>
+              </div>
+              <p className="text-sm font-black uppercase tracking-widest text-red-700">Active Dispute</p>
+            </div>
+            <p className="text-sm text-red-800">{escrow.disputes[0].reason}</p>
+            <p className="text-xs text-red-600 mt-2 font-medium">Status: {escrow.disputes[0].status}</p>
           </div>
         )}
 
         {/* Actions */}
-        <div className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 p-8">
-          <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-6">Actions</p>
+        <div className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 p-8 animate-fade-in-up stagger-4">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-6">Actions</p>
 
           {showDisputeForm ? (
-            <div className="space-y-4">
+            <div className="space-y-4 animate-scale-in">
+              <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
+                <p className="text-xs font-bold text-red-700 uppercase tracking-widest mb-1">⚠ Raise a Dispute</p>
+                <p className="text-xs text-red-600">This will flag the transaction and notify our legal team for review.</p>
+              </div>
               <textarea
                 value={disputeReason}
                 onChange={e => setDisputeReason(e.target.value)}
-                placeholder="Describe the reason for the dispute..."
-                rows={3}
-                className="w-full px-4 py-3 bg-surface-container-low border-b-2 border-outline-variant focus:border-error focus:ring-0 transition-all font-body rounded-lg"
+                placeholder="Describe the issue clearly. Include dates, amounts, and any relevant context..."
+                rows={4}
+                className="w-full px-4 py-3 bg-surface-container-low border border-outline-variant/20 focus:border-red-400 focus:ring-0 transition-colors font-body rounded-xl outline-none resize-none text-sm"
               />
               <div className="flex gap-3">
                 <button onClick={handleDispute} disabled={actionLoading === 'dispute' || !disputeReason.trim()}
-                  className="px-6 py-3 rounded-lg font-bold text-sm tracking-widest uppercase bg-error text-on-error hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm">gavel</span>
-                  {actionLoading === 'dispute' ? 'Submitting...' : 'Confirm Dispute'}
+                  className="px-6 py-3 rounded-xl font-bold text-sm tracking-wide bg-red-600 hover:bg-red-700 text-white active:scale-95 transition-all disabled:opacity-40 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>gavel</span>
+                  {actionLoading === 'dispute' ? 'Submitting…' : 'Confirm Dispute'}
                 </button>
-                <button onClick={() => setShowDisputeForm(false)} className="px-6 py-3 rounded-lg font-bold text-sm text-on-surface-variant hover:bg-surface-container-high transition-all">
+                <button onClick={() => setShowDisputeForm(false)}
+                  className="px-5 py-3 rounded-xl font-bold text-sm text-on-surface-variant hover:bg-surface-container-high transition-all">
                   Cancel
                 </button>
               </div>
             </div>
           ) : (
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-3">
               {['CREATED', 'FUNDING_PENDING'].includes(escrow.status) && (
                 <button onClick={handleFund} disabled={actionLoading === 'fund'}
-                  className="machined-gradient text-white px-8 py-3 rounded-lg font-bold text-sm tracking-widest uppercase flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all disabled:opacity-50">
-                  <span className="material-symbols-outlined text-sm">account_balance_wallet</span>
-                  {actionLoading === 'fund' ? 'Processing...' : 'Fund Escrow'}
+                  className="machined-gradient text-white px-8 py-3 rounded-xl font-bold text-sm tracking-wide flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all disabled:opacity-50">
+                  <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>account_balance_wallet</span>
+                  {actionLoading === 'fund' ? 'Processing…' : 'Fund Escrow'}
                 </button>
               )}
               {!['DISPUTED', 'RELEASED', 'REFUNDED'].includes(escrow.status) && (
                 <button onClick={() => setShowDisputeForm(true)}
-                  className="px-8 py-3 rounded-lg font-bold text-sm tracking-widest uppercase border-2 border-error text-error hover:bg-error/5 active:scale-95 transition-all flex items-center justify-center gap-2">
+                  className="px-8 py-3 rounded-xl font-bold text-sm tracking-wide border-2 border-red-300 text-red-600 hover:bg-red-50 active:scale-95 transition-all flex items-center justify-center gap-2">
                   <span className="material-symbols-outlined text-sm">gavel</span>
                   Open Dispute
                 </button>
               )}
               {escrow.status === 'RELEASED' && (
-                <p className="text-sm text-tertiary-fixed font-bold flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm">check_circle</span>
-                  Transaction complete — funds have been released.
-                </p>
+                <div className="flex items-center gap-2 px-4 py-3 bg-emerald-50 rounded-xl border border-emerald-200">
+                  <span className="material-symbols-outlined text-emerald-600 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                  <p className="text-sm text-emerald-800 font-bold">Transaction complete — funds released.</p>
+                </div>
+              )}
+              {escrow.status === 'REFUNDED' && (
+                <div className="flex items-center gap-2 px-4 py-3 bg-slate-50 rounded-xl border border-slate-200">
+                  <span className="material-symbols-outlined text-slate-500 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>undo</span>
+                  <p className="text-sm text-slate-700 font-bold">Transaction cancelled — funds refunded.</p>
+                </div>
+              )}
+              {!['CREATED', 'FUNDING_PENDING'].includes(escrow.status) && ['DISPUTED', 'RELEASED', 'REFUNDED'].includes(escrow.status) === false && (
+                <p className="text-xs text-on-surface-variant self-center">No available actions at this stage.</p>
               )}
             </div>
           )}
