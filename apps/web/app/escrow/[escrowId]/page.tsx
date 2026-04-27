@@ -221,6 +221,42 @@ export default function EscrowTimelinePage({ params }: { params: { escrowId: str
           </span>
         </div>
 
+        {/* Horizontal progress stepper */}
+        {!['DISPUTED', 'REFUNDED'].includes(escrow.status) && (
+          <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/10 p-6 mb-6 animate-fade-in-up shadow-[0_4px_20px_rgba(11,31,51,0.04)]">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-5">Transaction Progress</p>
+            <div className="relative grid grid-cols-5 gap-1">
+              {/* Connecting line */}
+              <div className="hidden sm:block absolute top-5 left-[10%] right-[10%] h-0.5 bg-surface-container-high z-0" />
+              {(['CREATED', 'FUNDING_PENDING', 'FUNDED', 'PENDING_RESOLUTION', 'RELEASED'] as const).map((stage, i) => {
+                const stageOrder = ['CREATED', 'FUNDING_PENDING', 'FUNDED', 'PENDING_RESOLUTION', 'RELEASED'];
+                const currentOrder = stageOrder.indexOf(escrow.status);
+                const isDone    = i < currentOrder;
+                const isCurrent = i === currentOrder;
+                const meta = STAGE_META[stage];
+                return (
+                  <div key={stage} className="flex flex-col items-center text-center gap-2 relative z-10 px-1">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
+                      isDone    ? 'bg-emerald-500 border-emerald-500 text-white'
+                      : isCurrent ? 'bg-primary border-primary text-white'
+                      :             'bg-white border-surface-container-high text-on-surface-variant/30'
+                    }`}>
+                      <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: (isDone || isCurrent) ? "'FILL' 1" : "'FILL' 0" }}>
+                        {isDone ? 'check' : meta?.icon || 'circle'}
+                      </span>
+                    </div>
+                    <div>
+                      <p className={`text-[10px] font-bold leading-tight ${isDone || isCurrent ? 'text-on-surface' : 'text-on-surface-variant/40'}`}>
+                        {meta?.label || stage}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Action message */}
         {actionMessage && (
           <div className={`mb-6 p-4 rounded-xl border-l-4 flex items-center gap-3 animate-scale-in ${

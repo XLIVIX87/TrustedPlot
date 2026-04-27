@@ -31,14 +31,20 @@ export function ListingCard({ id, title, city, district, price, propertyType, be
   const typeConfig = PROPERTY_TYPE_CONFIG[propertyType] ?? { icon: 'home', label: propertyType };
 
   return (
-    <Link href={`/listings/${id}`} className="group cursor-pointer block">
+    <Link
+      href={`/listings/${id}`}
+      className="group cursor-pointer block hover:-translate-y-2 transition-all duration-300"
+      style={{
+        filter: 'drop-shadow(0 4px 20px rgba(11,31,51,0.04))',
+      }}
+    >
       {/* Photo */}
-      <div className="relative overflow-hidden rounded-2xl aspect-[4/3] mb-4 shadow-sm group-hover:shadow-xl transition-shadow duration-500">
+      <div className="relative overflow-hidden rounded-2xl aspect-[4/3] mb-4 group-hover:shadow-[0_20px_40px_rgba(11,31,51,0.10)] transition-shadow duration-300">
         {thumbnailUrl ? (
           <img
             src={thumbnailUrl}
             alt={title}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex flex-col items-center justify-center gap-2">
@@ -47,8 +53,8 @@ export function ListingCard({ id, title, city, district, price, propertyType, be
           </div>
         )}
 
-        {/* Gradient overlay — darkens bottom for readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        {/* Gradient overlay — darkens bottom */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
 
         {/* Verification badge — top left */}
         <div className="absolute top-3 left-3">
@@ -68,7 +74,7 @@ export function ListingCard({ id, title, city, district, price, propertyType, be
           <p className="text-2xl font-headline font-black text-white leading-none mb-1">
             {formattedPrice}
           </p>
-          <p className="text-white/80 text-xs font-medium flex items-center gap-1">
+          <p className="text-white/75 text-xs font-medium flex items-center gap-1">
             <span className="material-symbols-outlined text-xs">location_on</span>
             {city}, {district}
           </p>
