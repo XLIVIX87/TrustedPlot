@@ -19,11 +19,11 @@ export function Footer() {
           {/* Trust badges */}
           <div className="flex gap-3">
             <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5">
-              <span className="material-symbols-outlined text-amber-400 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+              <span className="material-symbols-outlined text-amber-400 text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>verified</span>
               <span className="text-[10px] text-white/70 font-bold uppercase tracking-wider">C of O</span>
             </div>
             <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5">
-              <span className="material-symbols-outlined text-emerald-400 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
+              <span className="material-symbols-outlined text-emerald-400 text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>lock</span>
               <span className="text-[10px] text-white/70 font-bold uppercase tracking-wider">Escrow</span>
             </div>
           </div>

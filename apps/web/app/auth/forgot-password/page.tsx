@@ -36,7 +36,7 @@ export default function ForgotPasswordPage() {
           {submitted ? (
             <div className="text-center space-y-6">
               <div className="w-16 h-16 rounded-full bg-emerald-100 mx-auto flex items-center justify-center">
-                <span className="material-symbols-outlined text-emerald-600 text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>mark_email_read</span>
+                <span className="material-symbols-outlined text-emerald-600 text-3xl" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>mark_email_read</span>
               </div>
               <div>
                 <h2 className="font-headline font-bold text-xl mb-2">Check your inbox</h2>

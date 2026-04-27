@@ -136,7 +136,7 @@ export default function HomePage() {
           <div className="max-w-3xl">
             {/* Badge */}
             <div className="mb-7 inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 px-4 py-2 rounded-full">
-              <span className="material-symbols-outlined text-[#fed65b] text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+              <span className="material-symbols-outlined text-[#fed65b] text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>verified</span>
               <span className="text-white/85 text-[11px] font-bold uppercase tracking-[0.14em]">
                 Nigeria&apos;s Trust Infrastructure
               </span>
@@ -220,7 +220,7 @@ export default function HomePage() {
               ].map(f => (
                 <Link key={f.label} href={f.href}
                   className="bg-white/10 backdrop-blur-sm border border-white/15 hover:bg-white/20 text-white/80 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>{f.icon}</span>
+                  <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{f.icon}</span>
                   {f.label}
                 </Link>
               ))}
@@ -241,7 +241,7 @@ export default function HomePage() {
           ].map((s, i) => (
             <div key={s.label} className="flex items-center gap-3">
               {i > 0 && <div className="hidden md:block w-px h-10 bg-outline-variant/25 -mr-3" />}
-              <span className={`material-symbols-outlined text-2xl ${s.color}`} style={{ fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
+              <span className={`material-symbols-outlined text-2xl ${s.color}`} style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{s.icon}</span>
               <div>
                 <p className="text-xl font-black font-headline text-on-surface leading-none">{s.value}</p>
                 <p className="text-[11px] text-on-surface-variant font-medium mt-0.5">{s.label}</p>
@@ -277,7 +277,7 @@ export default function HomePage() {
                 className={`${tier.bg} border ${tier.border} rounded-2xl p-6 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(11,31,51,0.09)] transition-all duration-300 animate-fade-in-up`}
                 style={{ animationDelay: `${i * 80}ms` }}>
                 <div className={`w-11 h-11 rounded-xl ${tier.bg} border ${tier.border} flex items-center justify-center mb-5 shadow-sm`}>
-                  <span className={`material-symbols-outlined text-xl ${tier.iconColor}`} style={{ fontVariationSettings: "'FILL' 1" }}>{tier.icon}</span>
+                  <span className={`material-symbols-outlined text-xl ${tier.iconColor}`} style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{tier.icon}</span>
                 </div>
                 <span className={`text-[10px] font-bold uppercase tracking-widest ${tier.iconColor} block mb-1`}>{tier.tagline}</span>
                 <h3 className="text-base font-headline font-black mb-3">{tier.name}</h3>
@@ -285,7 +285,7 @@ export default function HomePage() {
                 <ul className="space-y-1.5">
                   {tier.features.map(f => (
                     <li key={f} className="flex items-start gap-2 text-xs font-medium">
-                      <span className={`material-symbols-outlined text-xs mt-0.5 shrink-0 ${tier.iconColor}`} style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                      <span className={`material-symbols-outlined text-xs mt-0.5 shrink-0 ${tier.iconColor}`} style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>check_circle</span>
                       {f}
                     </li>
                   ))}
@@ -319,7 +319,7 @@ export default function HomePage() {
                 className="relative z-10 flex flex-col items-center text-center px-2 animate-fade-in-up"
                 style={{ animationDelay: `${i * 100}ms` }}>
                 <div className="w-16 h-16 rounded-full bg-white/10 border-2 border-white/20 flex items-center justify-center mb-5">
-                  <span className="material-symbols-outlined text-2xl text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{step.icon}</span>
+                  <span className="material-symbols-outlined text-2xl text-white" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{step.icon}</span>
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-[0.16em] text-white/35 mb-2">{step.step}</span>
                 <h3 className="text-sm font-headline font-bold text-white mb-3">{step.title}</h3>

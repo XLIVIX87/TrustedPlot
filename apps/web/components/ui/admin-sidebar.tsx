@@ -22,7 +22,7 @@ export function AdminSidebar() {
         <div className="px-5 py-4 border-b border-outline-variant/10">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
+              <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>shield</span>
             </div>
             <div>
               <p className="text-xs font-black text-on-surface leading-none">Admin</p>
@@ -50,7 +50,7 @@ export function AdminSidebar() {
               >
                 <span
                   className="material-symbols-outlined text-sm"
-                  style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+                  style={{ fontVariationSettings: isActive ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
                 >
                   {item.icon}
                 </span>

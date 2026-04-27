@@ -130,7 +130,7 @@ export default function DashboardPage() {
           ].map(s => (
             <div key={s.label} className="bg-surface-container-lowest p-5 rounded-2xl flex flex-col gap-4 hover:shadow-md transition-all group border border-outline-variant/10">
               <div className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center`}>
-                <span className={`material-symbols-outlined ${s.iconColor}`} style={{ fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
+                <span className={`material-symbols-outlined ${s.iconColor}`} style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{s.icon}</span>
               </div>
               <div>
                 <p className="text-3xl font-black font-headline text-on-surface">{s.value}</p>

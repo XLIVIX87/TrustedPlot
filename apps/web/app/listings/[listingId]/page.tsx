@@ -237,7 +237,7 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
               {/* Description */}
               <div className="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/10">
                 <h3 className="font-headline font-bold text-lg mb-4 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>info</span>
+                  <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>info</span>
                   Property Overview
                 </h3>
                 <p className="text-on-surface-variant leading-relaxed text-base border-l-4 border-primary/20 pl-5 whitespace-pre-wrap">
@@ -249,7 +249,7 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
             {/* Trust Chain */}
             <section className="animate-fade-in-up stagger-2">
               <div className="flex items-center gap-2 mb-5">
-                <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>verified_user</span>
+                <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>verified_user</span>
                 <h2 className="text-lg font-bold font-headline tracking-tight">Verification Chain</h2>
               </div>
               <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/10 p-6">
@@ -290,7 +290,7 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
                           : 'bg-white border-surface-container-high text-on-surface-variant/40'
                       }`}>
                         <span className="material-symbols-outlined text-base"
-                          style={{ fontVariationSettings: step.done ? "'FILL' 1" : "'FILL' 0" }}>
+                          style={{ fontVariationSettings: step.done ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>
                           {step.done ? 'check' : step.icon}
                         </span>
                       </div>
@@ -313,11 +313,11 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
               <section className="space-y-5 animate-fade-in-up stagger-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>folder_open</span>
+                    <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>folder_open</span>
                     <h2 className="text-lg font-bold font-headline tracking-tight">Verified Document Vault</h2>
                   </div>
                   <span className="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full flex items-center gap-1">
-                    <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                    <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>auto_awesome</span>
                     AI Reviewed
                   </span>
                 </div>
@@ -325,7 +325,7 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
                   <div className="bg-surface-container-low p-6 rounded-2xl hover:bg-surface-container transition-colors cursor-pointer group border border-transparent hover:border-outline-variant/20">
                     <div className="flex items-start justify-between mb-4">
                       <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                        <span className="material-symbols-outlined text-blue-600 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>description</span>
+                        <span className="material-symbols-outlined text-blue-600 text-lg" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>description</span>
                       </div>
                       <span className="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-sm">lock</span>
                     </div>
@@ -377,20 +377,20 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
                       ) : (
                         <button onClick={() => setShowDatePicker(true)}
                           className="w-full py-3.5 machined-gradient text-white rounded-xl font-bold text-sm uppercase tracking-widest shadow-sm hover:shadow-md hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
-                          <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_today</span>
+                          <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>calendar_today</span>
                           Book Inspection
                         </button>
                       )}
 
                       <button onClick={() => handleAction('unlock')} disabled={actionLoading === 'unlock'}
                         className="w-full py-3.5 bg-surface-container-high text-on-surface font-bold text-sm uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 hover:bg-surface-container transition-all disabled:opacity-50">
-                        <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>lock_open</span>
+                        <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>lock_open</span>
                         {actionLoading === 'unlock' ? 'Unlocking…' : 'Unlock Documents'}
                       </button>
 
                       <button onClick={() => handleAction('escrow')} disabled={actionLoading === 'escrow'}
                         className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 active:scale-[0.99] transition-all disabled:opacity-50">
-                        <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>account_balance_wallet</span>
+                        <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>account_balance_wallet</span>
                         {actionLoading === 'escrow' ? 'Creating…' : 'Start Escrow'}
                       </button>
                     </>
@@ -433,7 +433,7 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
 
               {/* Security note */}
               <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-start gap-3">
-                <span className="material-symbols-outlined text-emerald-600 text-base shrink-0 mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>shield_lock</span>
+                <span className="material-symbols-outlined text-emerald-600 text-base shrink-0 mt-0.5" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>shield_lock</span>
                 <div>
                   <p className="text-xs font-bold text-emerald-800">Escrow Protected</p>
                   <p className="text-xs text-emerald-700 mt-0.5 leading-relaxed">Your funds are held securely until all conditions are met.</p>

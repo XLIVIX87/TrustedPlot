@@ -77,7 +77,7 @@ function StageTimeline({ stages, escrowStatus, events }: {
 
             {/* Dot */}
             <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${dotStyle(i)}`}>
-              <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: status === 'completed' ? "'FILL' 1" : "'FILL' 0" }}>
+              <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: status === 'completed' ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>
                 {status === 'completed' ? 'check_circle' : meta?.icon || 'circle'}
               </span>
             </div>
@@ -241,7 +241,7 @@ export default function EscrowTimelinePage({ params }: { params: { escrowId: str
                       : isCurrent ? 'bg-primary border-primary text-white'
                       :             'bg-white border-surface-container-high text-on-surface-variant/30'
                     }`}>
-                      <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: (isDone || isCurrent) ? "'FILL' 1" : "'FILL' 0" }}>
+                      <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: (isDone || isCurrent) ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>
                         {isDone ? 'check' : meta?.icon || 'circle'}
                       </span>
                     </div>
@@ -264,7 +264,7 @@ export default function EscrowTimelinePage({ params }: { params: { escrowId: str
               ? 'bg-emerald-50 border-emerald-500 text-emerald-800'
               : 'bg-error-container border-error text-on-error-container'
           }`}>
-            <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
+            <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>
               {actionMessage.toLowerCase().includes('success') ? 'check_circle' : 'error'}
             </span>
             <p className="text-sm font-medium">{actionMessage}</p>
@@ -353,7 +353,7 @@ export default function EscrowTimelinePage({ params }: { params: { escrowId: str
           <div className="bg-red-50 rounded-2xl border border-red-200 p-6 mb-6 animate-fade-in-up">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
-                <span className="material-symbols-outlined text-red-600 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>gavel</span>
+                <span className="material-symbols-outlined text-red-600 text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>gavel</span>
               </div>
               <p className="text-sm font-black uppercase tracking-widest text-red-700">Active Dispute</p>
             </div>
@@ -382,7 +382,7 @@ export default function EscrowTimelinePage({ params }: { params: { escrowId: str
               <div className="flex gap-3">
                 <button onClick={handleDispute} disabled={actionLoading === 'dispute' || !disputeReason.trim()}
                   className="px-6 py-3 rounded-xl font-bold text-sm tracking-wide bg-red-600 hover:bg-red-700 text-white active:scale-95 transition-all disabled:opacity-40 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>gavel</span>
+                  <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>gavel</span>
                   {actionLoading === 'dispute' ? 'Submitting…' : 'Confirm Dispute'}
                 </button>
                 <button onClick={() => setShowDisputeForm(false)}
@@ -396,7 +396,7 @@ export default function EscrowTimelinePage({ params }: { params: { escrowId: str
               {['CREATED', 'FUNDING_PENDING'].includes(escrow.status) && (
                 <button onClick={handleFund} disabled={actionLoading === 'fund'}
                   className="machined-gradient text-white px-8 py-3 rounded-xl font-bold text-sm tracking-wide flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all disabled:opacity-50">
-                  <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>account_balance_wallet</span>
+                  <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>account_balance_wallet</span>
                   {actionLoading === 'fund' ? 'Processing…' : 'Fund Escrow'}
                 </button>
               )}
@@ -409,13 +409,13 @@ export default function EscrowTimelinePage({ params }: { params: { escrowId: str
               )}
               {escrow.status === 'RELEASED' && (
                 <div className="flex items-center gap-2 px-4 py-3 bg-emerald-50 rounded-xl border border-emerald-200">
-                  <span className="material-symbols-outlined text-emerald-600 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                  <span className="material-symbols-outlined text-emerald-600 text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>check_circle</span>
                   <p className="text-sm text-emerald-800 font-bold">Transaction complete — funds released.</p>
                 </div>
               )}
               {escrow.status === 'REFUNDED' && (
                 <div className="flex items-center gap-2 px-4 py-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span className="material-symbols-outlined text-slate-500 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>undo</span>
+                  <span className="material-symbols-outlined text-slate-500 text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>undo</span>
                   <p className="text-sm text-slate-700 font-bold">Transaction cancelled — funds refunded.</p>
                 </div>
               )}

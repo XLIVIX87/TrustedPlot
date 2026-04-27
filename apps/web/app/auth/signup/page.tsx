@@ -83,7 +83,7 @@ export default function SignUpPage() {
             {PLATFORM_POINTS.map(p => (
               <li key={p.icon} className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>{p.icon}</span>
+                  <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{p.icon}</span>
                 </div>
                 <span className="text-white/75 text-sm font-medium">{p.text}</span>
               </li>
@@ -153,7 +153,7 @@ export default function SignUpPage() {
                         ? 'border-primary bg-primary/5 text-primary'
                         : 'border-outline-variant/20 bg-surface-container-low text-on-surface-variant hover:border-outline-variant'
                     }`}>
-                    <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>{r.icon}</span>
+                    <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{r.icon}</span>
                     <span className="text-[10px] font-bold uppercase tracking-wide leading-tight">{r.label.split(' / ')[0]}</span>
                   </button>
                 ))}
@@ -172,7 +172,7 @@ export default function SignUpPage() {
                 </>
               ) : (
                 <>
-                  <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>person_add</span>
+                  <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>person_add</span>
                   Create Account
                 </>
               )}

@@ -2,8 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+/*
+  Fonts are loaded via <link> tags in layout.tsx.
+  CSS @import after @tailwind directives is ignored by browsers per the CSS spec.
+*/
 
 /* ── Keyframe Animations ─────────────────────────────────── */
 @keyframes fadeInUp {
@@ -153,10 +155,38 @@
   .sla-overdue { @apply text-red-600 font-bold; }
 }
 
-/* ── Material Icons ──────────────────────────────────────── */
+/* ── Material Symbols ────────────────────────────────────── */
+/*
+  Base defaults for all icons.
+  Inline style={{ fontVariationSettings }} can override FILL per-icon.
+  We set all four axes here so partial inline overrides don't lose the others.
+*/
 .material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: inherit;            /* inherit size from parent so text-sm/text-xl etc work */
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga';
   vertical-align: middle;
+  user-select: none;
+  /* Default variable font axes */
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Filled variant — all other axes preserved */
+.material-symbols-outlined.filled,
+.icon-filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
 /* ── Selection ───────────────────────────────────────────── */

@@ -188,7 +188,7 @@ function FilterSidebar({
                     className="w-4 h-4 accent-primary"
                   />
                   <span className={`flex items-center gap-2 text-sm font-medium text-on-surface group-hover:text-primary transition-colors`}>
-                    <span className={`material-symbols-outlined text-xs ${opt.color}`} style={{ fontVariationSettings: "'FILL' 1" }}>{opt.icon}</span>
+                    <span className={`material-symbols-outlined text-xs ${opt.color}`} style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{opt.icon}</span>
                     {opt.label}
                   </span>
                 </label>

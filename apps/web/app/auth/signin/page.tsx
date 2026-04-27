@@ -77,7 +77,7 @@ function SignInForm() {
             {TRUST_POINTS.map(p => (
               <li key={p.icon} className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>{p.icon}</span>
+                  <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{p.icon}</span>
                 </div>
                 <span className="text-white/75 text-sm font-medium">{p.text}</span>
               </li>
@@ -151,7 +151,7 @@ function SignInForm() {
                 </>
               ) : (
                 <>
-                  <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>lock_open</span>
+                  <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>lock_open</span>
                   Sign In to Vault
                 </>
               )}
@@ -173,7 +173,7 @@ function SignInForm() {
                 <button key={a.email} type="button"
                   onClick={() => { setEmail(a.email); setPassword('password123'); }}
                   className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-surface-container-low hover:bg-surface-container text-center transition-all group">
-                  <span className="material-symbols-outlined text-on-surface-variant text-base group-hover:text-primary transition-colors" style={{ fontVariationSettings: "'FILL' 1" }}>{a.icon}</span>
+                  <span className="material-symbols-outlined text-on-surface-variant text-base group-hover:text-primary transition-colors" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{a.icon}</span>
                   <span className="text-[10px] font-bold text-on-surface-variant group-hover:text-on-surface transition-colors uppercase tracking-wide">{a.label}</span>
                 </button>
               ))}

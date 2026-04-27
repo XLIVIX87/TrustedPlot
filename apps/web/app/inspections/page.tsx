@@ -61,7 +61,7 @@ function UpcomingCalendarStrip({ inspections }: { inspections: Inspection[] }) {
   return (
     <div className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 p-6 mb-8 animate-fade-in-up">
       <div className="flex items-center gap-2 mb-4">
-        <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>event</span>
+        <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>event</span>
         <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Upcoming Inspections</p>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-1 hide-scrollbar">
@@ -137,7 +137,7 @@ export default function InspectionsPage() {
         {!session ? (
           <div className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 p-12 text-center animate-fade-in">
             <div className="w-16 h-16 bg-surface-container-high rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <span className="material-symbols-outlined text-3xl text-on-surface-variant" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
+              <span className="material-symbols-outlined text-3xl text-on-surface-variant" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>lock</span>
             </div>
             <p className="text-lg font-bold font-headline mb-2">Sign in to view inspections</p>
             <p className="text-sm text-on-surface-variant mb-6">Access your inspection schedule and reports.</p>
@@ -238,7 +238,7 @@ export default function InspectionsPage() {
                           </p>
                           {inspection.hasReport && (
                             <p className="text-xs text-emerald-600 flex items-center gap-1 mt-1.5 font-medium">
-                              <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>task_alt</span>
+                              <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>task_alt</span>
                               Inspection report available
                             </p>
                           )}
@@ -247,7 +247,7 @@ export default function InspectionsPage() {
                         <div className="flex items-center gap-3 flex-wrap shrink-0">
                           {/* Status badge */}
                           <span className={`text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 ${cfg.bg} ${cfg.text}`}>
-                            <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>{cfg.icon}</span>
+                            <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{cfg.icon}</span>
                             {cfg.label}
                           </span>
 

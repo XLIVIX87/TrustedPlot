@@ -33,7 +33,7 @@ export function VerificationBadge({ badge }: { badge: BadgeVariant }) {
       {config.icon && (
         <span
           className="material-symbols-outlined text-[13px]"
-          style={{ fontVariationSettings: "'FILL' 1" }}
+          style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
         >
           {config.icon}
         </span>

@@ -332,7 +332,7 @@ export default function NewListingPage() {
 
                   {!hasRequired && documents.length > 0 && (
                     <p className="text-xs text-amber-700 font-bold mt-2 flex items-center gap-1">
-                      <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>info</span>
+                      <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>info</span>
                       Certificate of Occupancy is required for verification
                     </p>
                   )}

@@ -38,7 +38,7 @@ export function EmptyState({ icon, title, description, action, size = 'md' }: Em
     <div className={`flex flex-col items-center justify-center text-center ${paddingClass} animate-fade-in`}>
       {icon && (
         <div className={`${iconSizeClass} rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-5 ring-1 ring-outline-variant/10`}>
-          <span className={`material-symbols-outlined ${iconColor}`} style={{ fontVariationSettings: "'FILL' 1", fontSize: 'inherit' }}>
+          <span className={`material-symbols-outlined ${iconColor}`} style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24", fontSize: 'inherit' }}>
             {icon}
           </span>
         </div>

@@ -83,13 +83,13 @@ function SlaPill({ dueAt }: { dueAt: string }) {
   const label = getSlaLabel(dueAt);
   if (state === 'overdue') return (
     <span className="inline-flex items-center gap-1 text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded-lg">
-      <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>alarm_off</span>
+      <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>alarm_off</span>
       {label}
     </span>
   );
   if (state === 'warning') return (
     <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1 rounded-lg animate-pulse-soft">
-      <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>timer</span>
+      <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>timer</span>
       {label}
     </span>
   );
@@ -194,7 +194,7 @@ export default function VerificationQueuePage() {
               className="bg-surface-container-lowest p-5 rounded-2xl flex flex-col gap-3 border border-outline-variant/10 hover:shadow-md transition-all animate-fade-in-up shadow-[0_4px_20px_rgba(11,31,51,0.04)]"
               style={{ animationDelay: `${i * 60}ms` }}>
               <div className={`w-10 h-10 rounded-xl ${s.bg} flex items-center justify-center`}>
-                <span className={`material-symbols-outlined ${s.color}`} style={{ fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
+                <span className={`material-symbols-outlined ${s.color}`} style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{s.icon}</span>
               </div>
               <div>
                 <p className="text-3xl font-black font-headline text-on-surface">{s.value}</p>
@@ -207,7 +207,7 @@ export default function VerificationQueuePage() {
         {/* Compliance reminder */}
         {overdueCount > 0 && (
           <div className="mb-6 bg-red-50 border border-red-200 rounded-2xl p-4 flex items-start gap-3 animate-scale-in">
-            <span className="material-symbols-outlined text-red-600 shrink-0 mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
+            <span className="material-symbols-outlined text-red-600 shrink-0 mt-0.5" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>warning</span>
             <div>
               <p className="text-sm font-bold text-red-700">SLA Compliance Alert</p>
               <p className="text-xs text-red-600/80 mt-0.5">
@@ -336,7 +336,7 @@ export default function VerificationQueuePage() {
                                 : 'machined-gradient text-white hover:opacity-90'
                             }`}
                           >
-                            <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>
+                            <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>
                               {isDeciding ? 'expand_less' : 'gavel'}
                             </span>
                             {isDeciding ? 'Close' : 'Decide'}
@@ -352,7 +352,7 @@ export default function VerificationQueuePage() {
                       {isDeciding && (
                         <div className="border-t border-outline-variant/10 bg-surface-container-low px-6 py-5 space-y-5 animate-fade-in">
                           <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
-                            <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>gavel</span>
+                            <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>gavel</span>
                             Decision Panel — {c.listing.title}
                           </p>
 
@@ -373,7 +373,7 @@ export default function VerificationQueuePage() {
                                                                 : 'border-red-500 bg-red-50 text-red-700'
                                           : 'border-outline-variant/20 text-on-surface-variant hover:border-outline-variant bg-surface-container-lowest'
                                       }`}>
-                                      <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>{cfg.icon}</span>
+                                      <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{cfg.icon}</span>
                                       {cfg.label}
                                     </button>
                                   );
@@ -426,7 +426,7 @@ export default function VerificationQueuePage() {
                                   {submitting ? (
                                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                   ) : (
-                                    <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>{dcfg.icon}</span>
+                                    <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{dcfg.icon}</span>
                                   )}
                                   {submitting ? 'Submitting…' : `Submit: ${dcfg.label}`}
                                 </button>

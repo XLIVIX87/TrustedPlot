@@ -64,7 +64,7 @@ export function ListingCard({ id, title, city, district, price, propertyType, be
         {/* Escrow pill — top right */}
         {badge !== 'NONE' && (
           <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm border border-white/20 text-white text-[9px] font-bold px-2 py-0.5 rounded-full tracking-widest uppercase flex items-center gap-1">
-            <span className="material-symbols-outlined text-[11px]" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
+            <span className="material-symbols-outlined text-[11px]" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>lock</span>
             Escrow
           </div>
         )}

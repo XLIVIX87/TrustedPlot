@@ -41,7 +41,7 @@ function AdminSidebar({ active }: { active: string }) {
         <div className="px-5 py-4 border-b border-outline-variant/10">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
+              <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>shield</span>
             </div>
             <div>
               <p className="text-xs font-black text-on-surface leading-none">Admin</p>
@@ -64,7 +64,7 @@ function AdminSidebar({ active }: { active: string }) {
                     : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
                 }`}
               >
-                <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}>
+                <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: isActive ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>
                   {item.icon}
                 </span>
                 {item.label}
@@ -221,7 +221,7 @@ export default function AdminDashboardPage() {
                     style={{ animationDelay: `${i * 60}ms` }}
                   >
                     <div className={`w-10 h-10 rounded-xl ${m.iconBg} flex items-center justify-center`}>
-                      <span className={`material-symbols-outlined ${m.iconColor}`} style={{ fontVariationSettings: "'FILL' 1" }}>{m.icon}</span>
+                      <span className={`material-symbols-outlined ${m.iconColor}`} style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{m.icon}</span>
                     </div>
                     <div>
                       <p className="text-3xl font-black font-headline text-on-surface">{m.value}</p>
@@ -270,7 +270,7 @@ export default function AdminDashboardPage() {
                   style={{ animationDelay: `${300 + i * 60}ms` }}
                 >
                   <div className={`w-10 h-10 rounded-xl bg-white/80 border border-current/10 flex items-center justify-center shrink-0`}>
-                    <span className={`material-symbols-outlined text-sm ${action.iconColor}`} style={{ fontVariationSettings: "'FILL' 1" }}>{action.icon}</span>
+                    <span className={`material-symbols-outlined text-sm ${action.iconColor}`} style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{action.icon}</span>
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-on-surface">{action.title}</p>
@@ -323,7 +323,7 @@ export default function AdminDashboardPage() {
                           {/* Timeline dot + icon */}
                           <div className="flex flex-col items-center shrink-0">
                             <div className={`w-8 h-8 rounded-lg ${iconMap.bg} flex items-center justify-center`}>
-                              <span className={`material-symbols-outlined text-sm ${iconMap.color}`} style={{ fontVariationSettings: "'FILL' 1" }}>
+                              <span className={`material-symbols-outlined text-sm ${iconMap.color}`} style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>
                                 {iconMap.icon}
                               </span>
                             </div>

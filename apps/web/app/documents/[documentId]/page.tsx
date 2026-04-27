@@ -197,7 +197,7 @@ export default function DocumentViewerPage({ params }: { params: { documentId: s
             {/* AI Summary */}
             <div className="bg-surface-container-lowest rounded-2xl ring-1 ring-black/5 p-6">
               <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-sm text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                <span className="material-symbols-outlined text-sm text-primary" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>auto_awesome</span>
                 <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">AI Summary</p>
               </div>
 
