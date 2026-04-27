@@ -4,12 +4,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const NAV_ITEMS = [
-  { href: '/admin',        icon: 'grid_view',              label: 'Dashboard'     },
-  { href: '/admin/users',  icon: 'group',                  label: 'Users'         },
-  { href: '/verification', icon: 'verified_user',          label: 'Verifications' },
-  { href: '/escrow',       icon: 'account_balance_wallet', label: 'Escrow'        },
-  { href: '/inspections',  icon: 'search',                 label: 'Inspections'   },
-  { href: '/admin/audit',  icon: 'history',                label: 'Audit Log'     },
+  { href: '/admin',               icon: 'grid_view',              label: 'Dashboard'     },
+  { href: '/admin/users',         icon: 'group',                  label: 'Users'         },
+  { href: '/verification',        icon: 'verified_user',          label: 'Verifications' },
+  { href: '/admin/inspections',   icon: 'manage_search',          label: 'Inspections'   },
+  { href: '/escrow',              icon: 'account_balance_wallet', label: 'Escrow'        },
+  { href: '/admin/audit',         icon: 'history',                label: 'Audit Log'     },
 ];
 
 export function AdminSidebar() {
@@ -34,7 +34,10 @@ export function AdminSidebar() {
         {/* Nav items */}
         <nav className="p-3 space-y-0.5">
           {NAV_ITEMS.map(item => {
-            const isActive = pathname === item.href;
+            // Exact match for dashboard; prefix match for everything else
+          const isActive = item.href === '/admin'
+            ? pathname === '/admin'
+            : pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}

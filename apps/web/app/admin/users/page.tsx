@@ -137,18 +137,19 @@ export default function AdminUsersPage() {
                     <th className="text-left px-4 py-3 font-bold text-xs uppercase tracking-wider">Status</th>
                     <th className="text-left px-4 py-3 font-bold text-xs uppercase tracking-wider hidden md:table-cell">Activity</th>
                     <th className="text-left px-4 py-3 font-bold text-xs uppercase tracking-wider hidden md:table-cell">Joined</th>
+                    <th className="px-4 py-3" />
                   </tr>
                 </thead>
                 <tbody>
                   {users.map(u => (
-                    <tr key={u.id} className="border-b border-outline-variant/10 hover:bg-surface-container-low transition-colors">
+                    <tr key={u.id} className="border-b border-outline-variant/10 hover:bg-surface-container-low transition-colors cursor-pointer" onClick={() => window.location.href = `/admin/users/${u.id}`}>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-xs shrink-0">
                             {initials(u.name, u.email)}
                           </div>
                           <div>
-                            <div className="font-medium">{u.name || '—'}</div>
+                            <div className="font-medium hover:text-primary transition-colors">{u.name || '—'}</div>
                             <div className="text-xs text-on-surface-variant">{u.email}</div>
                             {u.sellerProfile && (
                               <div className="text-[10px] text-on-surface-variant mt-0.5">
@@ -173,6 +174,11 @@ export default function AdminUsersPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell text-xs text-on-surface-variant">{fmtDate(u.createdAt)}</td>
+                      <td className="px-4 py-3 text-right">
+                        <Link href={`/admin/users/${u.id}`} onClick={e => e.stopPropagation()} className="text-primary hover:underline text-xs font-bold flex items-center gap-0.5 justify-end">
+                          View <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                        </Link>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
